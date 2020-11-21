@@ -52,8 +52,10 @@ public class FakeEquippableEntity extends FakeLivingEntity {
     }
 
     public void setItem(ItemSlot slot, ItemStack item) {
+        this.assertNotDead();
+        
         this.equipment.put(slot, item);
-
+        
         WrapperPlayServerEntityEquipment packet = new WrapperPlayServerEntityEquipment();
         packet.setEntityID(getEntityId());
         packet.setSlot(slot);
@@ -62,5 +64,9 @@ public class FakeEquippableEntity extends FakeLivingEntity {
         for (Player player : super.getVisibilityHandler().renderedTo()) {
             packet.sendPacket(player);
         }
+    }
+    
+    public ItemStack getItem(ItemSlot slot) {
+        return this.equipment.get(slot);
     }
 }

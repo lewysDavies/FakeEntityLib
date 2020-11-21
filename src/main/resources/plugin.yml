@@ -1,7 +1,6 @@
-name: FakeEntity
+name: FakeEntityLib
 version: 1
-description: "Creates fake entites managed off the main server thread"
-author: LewDev
+description: "Creates fake entites that are managed off the main server thread"
+author: "Lewys Davies (Lew_)"
 depends: ProtocolLib
-
 main: uk.lewdev.entitylib.FakeEntityPlugin
