@@ -20,6 +20,7 @@ public abstract class FakeLivingEntity extends FakeEntity {
 		super(type, uuid, world, x, y, z, yaw, headPitch);
 		this.headYaw = headYaw;
 	}
+	
 	// Note: Pitch is used for HeadPitch in living entities
 	protected FakeLivingEntity(EntityType type, UUID uuid, World world, double x, double y, double z, float yaw, float headPitch) {
 		this(type, uuid, world, x, y, z, yaw, headPitch, 0);
