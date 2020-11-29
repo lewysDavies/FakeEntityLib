@@ -47,14 +47,14 @@ public class VisibilityHandler {
 	 * @return Collection of all players who currently have this entity rendered
 	 */
 	protected final Collection<Player> renderedTo() {
-		return this.renderedTo;
+		return new HashSet<>(this.renderedTo);
 	}
 	
 	/**
 	 * @return Collection of all players who could see this entity
 	 */
 	protected final Collection<Player> visibleTo() {
-		return this.visibleTo();
+		return new HashSet<>(this.visibleTo);
 	}
 	
 	/**

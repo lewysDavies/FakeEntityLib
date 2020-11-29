@@ -115,13 +115,14 @@ public abstract class FakeEntity {
 	 */
 	public final void destroy() {
 		if (this.isDead()) return;
-		this.isDead.set(true);
 		
 		ALL_ALIVE_INSTANCES.remove(this.entityId);
 
 		// Get copy of current render list and destroy visibility handler
 		this.visibilityHandler.visibleTo().forEach(this::sendDestroyPacket);
 		this.visibilityHandler.destroy();
+		
+		this.isDead.set(true);
 	}
 
 	/**

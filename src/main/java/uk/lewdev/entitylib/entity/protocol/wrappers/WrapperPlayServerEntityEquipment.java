@@ -1,5 +1,8 @@
 package uk.lewdev.entitylib.entity.protocol.wrappers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
@@ -8,11 +11,17 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
+import com.comphenix.protocol.wrappers.Pair;
+
+import uk.lewdev.entitylib.utils.MCVersion;
 
 public class WrapperPlayServerEntityEquipment extends AbstractPacket {
     
     public static final PacketType TYPE =
             PacketType.Play.Server.ENTITY_EQUIPMENT;
+    
+    private ItemSlot slot;
+    private ItemStack item;
 
     public WrapperPlayServerEntityEquipment() {
         super(new PacketContainer(TYPE), TYPE);
@@ -64,11 +73,17 @@ public class WrapperPlayServerEntityEquipment extends AbstractPacket {
     }
 
     public ItemSlot getSlot() {
-        return handle.getItemSlots().read(0);
+        return this.slot;
     }
 
     public void setSlot(ItemSlot value) {
-        handle.getItemSlots().write(0, value);
+        this.slot = value;
+        
+        if(MCVersion.CUR_VERSION().isAfterOr1_16()) {
+            this.update1_16Packet();
+        } else {
+            handle.getItemSlots().write(0, value);
+        }
     }
 
     /**
@@ -79,7 +94,7 @@ public class WrapperPlayServerEntityEquipment extends AbstractPacket {
      * @return The current Item
      */
     public ItemStack getItem() {
-        return handle.getItemModifier().read(0);
+        return this.item;
     }
 
     /**
@@ -88,6 +103,25 @@ public class WrapperPlayServerEntityEquipment extends AbstractPacket {
      * @param value - new value.
      */
     public void setItem(ItemStack value) {
-        handle.getItemModifier().write(0, value);
+        this.item = value;
+        
+        if(MCVersion.CUR_VERSION().isAfterOr1_16()) {
+            this.update1_16Packet();
+        } else {
+            handle.getItemModifier().write(0, value);
+        }
+    }
+    
+    private void update1_16Packet() {
+        if(this.slot == null || this.item == null) {
+            return;
+        }
+        
+        List<Pair<ItemSlot, ItemStack>> items = new ArrayList<>();
+        
+        Pair<ItemSlot, ItemStack> pair = new Pair<>(this.slot, this.item);
+        items.add(pair);
+        
+        handle.getSlotStackPairLists().write(0, items);
     }
 }
