@@ -42,6 +42,11 @@ public class FakeStand extends FakeEquippableEntity {
 		this.initDataWatcherObjs();
 	}
 	
+	public FakeStand(World world, double x, double y, double z, float yaw, float headPitch) {
+        super(EntityType.ARMOR_STAND, UUID.randomUUID(), world, x, y, z, yaw, headPitch);
+        this.initDataWatcherObjs();
+    }
+	
 	protected void initDataWatcherObjs() {
 		super.getDataWatcher().setObject(this.standByteWatcher, this.standByte);
 		super.getDataWatcher().setObject(this.headRotWatcher, BodyPart.HEAD.defaultVec3F());
