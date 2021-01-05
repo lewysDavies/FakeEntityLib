@@ -25,6 +25,11 @@ public class FakeGuardian extends FakeLivingEntity {
         super.getDataWatcher().setObject(this.guardianTarget, this.entityTargetID);
     }
     
+    protected FakeGuardian(EntityType type, World world, double x, double y, double z) {
+        super(type, UUID.randomUUID(), world, x, y, z);
+        super.getDataWatcher().setObject(this.guardianTarget, this.entityTargetID);
+    }
+    
     public void setTarget(int entityID) {
         super.assertNotDead();
         
