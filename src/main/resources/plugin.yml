@@ -1,5 +1,5 @@
 name: FakeEntityLib
-version: 1
+version: 1.1
 description: "Creates fake entites that are managed off the main server thread"
 author: "Lewys Davies (Lew_)"
 depends: ProtocolLib
