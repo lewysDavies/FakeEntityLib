@@ -153,6 +153,13 @@ public abstract class FakeEntity {
 	public final boolean isDead() {
 		return this.isDead.get();
 	}
+	
+	/**
+	 * @return Unique entity ID for use in packets
+	 */
+	public final int getEID() {
+	    return this.entityId;
+	}
 
 	/**
 	 * @return the type
