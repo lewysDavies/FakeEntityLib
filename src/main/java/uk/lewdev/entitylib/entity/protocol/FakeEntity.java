@@ -346,6 +346,25 @@ public abstract class FakeEntity {
 	}
 	
 	/**
+	 * @param swimming
+	 */
+	public void setSwimming(boolean swimming) {
+	    this.assertNotDead();
+	    
+	    this.entityDataByte = MaskUtil.setBit(this.entityDataByte, 4, swimming);
+	    this.dataWatcher.setObject(this.entityByteWatcher, this.entityDataByte);
+	    
+	    this.sendMetaUpdate();
+	}
+	
+	/**
+	 * @return Entity is swimming
+	 */
+	public boolean isSwimming() {
+	    return MaskUtil.getBit(this.entityDataByte, 4);
+	}
+	
+	/**
 	 * @return name
 	 */
 	public String getCustomName() {
