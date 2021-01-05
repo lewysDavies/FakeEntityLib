@@ -20,7 +20,7 @@ public class FakeGuardian extends FakeLivingEntity {
     
     private int entityTargetID = 0;
 
-    protected FakeGuardian(World world, double x, double y, double z) {
+    public FakeGuardian(World world, double x, double y, double z) {
         super(EntityType.GUARDIAN, UUID.randomUUID(), world, x, y, z);
         super.getDataWatcher().setObject(this.guardianTarget, this.entityTargetID);
     }
