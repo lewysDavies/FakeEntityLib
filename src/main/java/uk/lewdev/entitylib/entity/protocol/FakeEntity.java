@@ -391,6 +391,13 @@ public abstract class FakeEntity {
 	}
 	
 	/**
+	 * @return Location of this entity
+	 */
+	public Location getLocation() {
+	    return new Location(this.world, this.x, this.y, this.z, this.getYaw(), this.getPitch());
+	}
+	
+	/**
 	 * Move or teleport an entity to the new location, depending on distance<br>
 	 * 
 	 * @apiNote Calls {@link #setLocation(double, double, double, float, float)
