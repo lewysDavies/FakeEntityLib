@@ -45,7 +45,7 @@ public class VisibilityHandler {
 		
 		// Update players
 		if(this.globalVisibility) {
-            Bukkit.getOnlinePlayers().forEach(this::update);
+            this.entity.getWorld().getPlayers().forEach(this::update);
         } else {
             this.visibleTo.forEach(this::update);
         }
