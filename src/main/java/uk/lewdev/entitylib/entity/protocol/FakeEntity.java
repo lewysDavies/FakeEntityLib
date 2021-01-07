@@ -512,6 +512,14 @@ public abstract class FakeEntity {
 	}
 	
 	/**
+	 * @param visibleToAll
+	 */
+	public final void setGloballyVisible(boolean visibleToAll) {
+	    this.assertNotDead();
+	    this.visibilityHandler.setGloballyVisible(visibleToAll);
+	}
+	
+	/**
 	 * @return this entities unique id
 	 */
 	protected final int getEntityId() {

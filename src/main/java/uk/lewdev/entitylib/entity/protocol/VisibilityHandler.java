@@ -2,6 +2,8 @@ package uk.lewdev.entitylib.entity.protocol;
 
 import java.util.Collection;
 import java.util.HashSet;
+
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 /**
@@ -9,12 +11,14 @@ import org.bukkit.entity.Player;
  */
 public class VisibilityHandler {
 	
-	private final static int RENDER_DISTANCE = 50; // Blocks
+	private final static int RENDER_DISTANCE = 150; // Blocks
 	
 	private final FakeEntity entity;
 	
 	private final HashSet<Player> visibleTo  = new HashSet<Player>();   // Players who could see this entity, if render conditions are met
 	private final HashSet<Player> renderedTo = new HashSet<Player>();  // Players this entity is currently rendered to
+	
+	private boolean globalVisibility = false;
 	
 	protected VisibilityHandler(FakeEntity entity) {
 		this.entity = entity;
@@ -39,8 +43,12 @@ public class VisibilityHandler {
 		this.visibleTo.removeIf(player -> !player.isOnline());
 		this.renderedTo.removeIf(player -> !player.isOnline());
 		
-		// Update remaining players
-		this.visibleTo.forEach(this::update);
+		// Update players
+		if(this.globalVisibility) {
+            Bukkit.getOnlinePlayers().forEach(this::update);
+        } else {
+            this.visibleTo.forEach(this::update);
+        }
 	}
 	
 	/**
@@ -53,7 +61,8 @@ public class VisibilityHandler {
 	/**
 	 * @return Collection of all players who could see this entity
 	 */
-	protected final Collection<Player> visibleTo() {
+	protected final Collection<? extends Player> visibleTo() {
+	    if(this.globalVisibility) return Bukkit.getOnlinePlayers();
 		return new HashSet<>(this.visibleTo);
 	}
 	
@@ -62,10 +71,12 @@ public class VisibilityHandler {
 	 * @return True if Player could see this entity
 	 */
 	public final boolean isVisible(Player player) {
+	    if(this.globalVisibility) return true;
 		return this.visibleTo.contains(player);
 	}
 	
 	public final void setVisible(Player player) {
+	    if(this.globalVisibility) return;
 		if(this.entity.isDead()) return;
 		if(this.visibleTo.contains(player)) return;
 	
@@ -76,12 +87,40 @@ public class VisibilityHandler {
 		}
 	}
 	
+	/**
+	 * @param player
+	 * @throws IllegalStateException if {@link #isGloballyVisible()}
+	 */
 	public final void setNotVisible(Player player) {
+	    if(this.globalVisibility) {
+	        throw new IllegalStateException("Cannot hide a isGloballyVisible() mob from specific players.");
+	    }
+	    
 		if(this.entity.isDead()) return;
 		if(! this.visibleTo.contains(player)) return;
 		
 		this.visibleTo.remove(player);
 		this.unRender(player);
+	}
+	
+	/**
+	 * @return True if displayed to everyone by default, else False.
+	 */
+	public final boolean isGloballyVisible() {
+	    return this.globalVisibility;
+	}
+	
+	/**
+	 * @param visibleToAll
+	 */
+	public final void setGloballyVisible(boolean visibleToAll) {
+	    if(this.globalVisibility == visibleToAll) return;
+	    
+	    this.globalVisibility = visibleToAll;
+	    
+	    if(visibleToAll) {
+	        this.visibleTo.clear();
+	    }
 	}
 	
 	/**
@@ -112,7 +151,7 @@ public class VisibilityHandler {
 	 * @return True if player is in the same world, and within render distance
 	 */
 	private final boolean shouldRenderTo(Player player) {
-		 return this.entity.getWorld() == player.getWorld()
+		 return this.entity.getWorld().equals(player.getWorld())
 				 && this.isInRange(player);
 	}
 	
