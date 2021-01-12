@@ -61,9 +61,7 @@ public class FakeEquippableEntity extends FakeLivingEntity {
         packet.setSlot(slot);
         packet.setItem(item);
 
-        for (Player player : super.getVisibilityHandler().renderedTo()) {
-            packet.sendPacket(player);
-        }
+        super.getVisibilityHandler().renderedTo().forEach(packet::sendPacket);
     }
     
     public ItemStack getItem(ItemSlot slot) {

@@ -78,6 +78,10 @@ public abstract class FakeEntity {
 	private boolean customNameVisible = false;
 	private boolean glow = false;
 	private EntityPose wrappedPose = EntityPose.STANDING;
+	
+	private PacketContainer movePacket = new PacketContainer(PacketType.Play.Server.REL_ENTITY_MOVE_LOOK);
+	private PacketContainer teleportPacket = new PacketContainer(PacketType.Play.Server.ENTITY_TELEPORT);
+	private PacketContainer metaPacket = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
 
 	protected FakeEntity(EntityType type, UUID uuid, World world, double x, double y, double z, float yaw, float pitch) {
 		this.entityId = EntityID.nextAndIncrement();
@@ -91,12 +95,36 @@ public abstract class FakeEntity {
 		this.z = z;
 		this.yaw = yaw;
 		this.pitch = pitch;
-
+		
+		this.initMovePackets();
+		
 		this.destroyPacket.getIntegerArrays().write(0, new int[] { this.entityId });
-
+		this.metaPacket.getIntegers().write(0, this.getEntityId());
+		
 		this.initDataWatcherObjs();
 		
 		ALL_ALIVE_INSTANCES.put(this.entityId, this);
+	}
+	
+	private void initMovePackets() {
+	    this.teleportPacket.getIntegers().write(0, this.getEntityId());
+	    this.teleportPacket.getDoubles().write(0, this.x);
+	    this.teleportPacket.getDoubles().write(1, this.y);
+	    this.teleportPacket.getDoubles().write(2, this.z);
+	    this.teleportPacket.getBytes().write(0, AngleUtil.fromDegrees(this.yaw));
+	    this.teleportPacket.getBytes().write(1, AngleUtil.fromDegrees(this.pitch));
+	    
+        short dx = (short) ((this.x * 32 - this.x * 32) * 128);
+        short dy = (short) ((this.y * 32 - this.y * 32) * 128);
+        short dz = (short) ((this.z * 32 - this.z * 32) * 128);
+        
+        this.movePacket.getIntegers().write(0, this.getEntityId());
+        this.movePacket.getShorts().write(0, dx);
+        this.movePacket.getShorts().write(1, dy);
+        this.movePacket.getShorts().write(2, dz);
+        this.movePacket.getBytes().write(0, AngleUtil.fromDegrees(this.yaw));
+        this.movePacket.getBytes().write(1, AngleUtil.fromDegrees(this.pitch));
+        this.movePacket.getBooleans().write(0, true);
 	}
 	
 	/**
@@ -195,8 +223,7 @@ public abstract class FakeEntity {
 	 */
 	public final void setX(double x) {
 		this.assertNotDead();
-		this.x = x;
-		this.setLocation(this.x, this.y, this.z, this.yaw, this.pitch);
+		this.setLocation(x, this.y, this.z, this.yaw, this.pitch);
 	}
 
 	/**
@@ -211,8 +238,7 @@ public abstract class FakeEntity {
 	 */
 	public final void setY(double y) {
 		this.assertNotDead();
-		this.y = y;
-		this.setLocation(this.x, this.y, this.z, this.yaw, this.pitch);
+		this.setLocation(this.x, y, this.z, this.yaw, this.pitch);
 	}
 
 	/**
@@ -227,8 +253,7 @@ public abstract class FakeEntity {
 	 */
 	public final void setZ(double z) {
 		this.assertNotDead();
-		this.z = z;
-		this.setLocation(this.x, this.y, this.z, this.yaw, this.pitch);
+		this.setLocation(this.x, this.y, z, this.yaw, this.pitch);
 	}
 
 	/**
@@ -243,8 +268,7 @@ public abstract class FakeEntity {
 	 */
 	public final void setYaw(float yaw) {
 		this.assertNotDead();
-		this.yaw = yaw;
-		this.setLocation(this.x, this.y, this.z, this.yaw, this.pitch);
+		this.setLocation(this.x, this.y, this.z, yaw, this.pitch);
 	}
 
 	/**
@@ -259,8 +283,7 @@ public abstract class FakeEntity {
 	 */
 	public final void setPitch(float pitch) {
 		this.assertNotDead();
-		this.pitch = pitch;
-		this.setLocation(this.x, this.y, this.z, this.yaw, this.pitch);
+		this.setLocation(this.x, this.y, this.z, this.yaw, pitch);
 	}
 
 	/**
@@ -427,7 +450,7 @@ public abstract class FakeEntity {
 	}
 
 	/**
-	 * Move or teleport an entity to the new location, depending on distance
+	 * Teleport an entity to the new location, depending on distance
 	 * 
 	 * @param x
 	 * @param y
@@ -437,19 +460,14 @@ public abstract class FakeEntity {
 	 */
 	public final void setLocation(double x, double y, double z, float yaw, float pitch) {
 		this.assertNotDead();
-
-		this.yaw = yaw;
-		this.pitch = pitch;
-
-		if (new Location(this.world, x, y, z).distance(new Location(this.world, this.x, this.y, this.z)) > 8) {
-			this.sendTeleportPacket(x, y, z);
-		} else {
-			this.sendMovePacket(x, y, z, true);
-		}
-
+		
+		this.sendTeleportPacket(x, y, z, yaw, pitch);
+		
 		this.x = x;
 		this.y = y;
 		this.z = z;
+		this.yaw = yaw;
+        this.pitch = pitch;
 	}
 
 	/**
@@ -467,15 +485,14 @@ public abstract class FakeEntity {
 	 */
 	public final void move(double x, double y, double z, float yaw, float pitch) {
 		this.assertNotDead();
-
-		this.yaw = yaw;
-		this.pitch = pitch;
-
-		this.sendMovePacket(x, y, z, true);
-
+		
+		this.sendMovePacket(x, y, z, yaw, pitch);
+		
 		this.x = x;
 		this.y = y;
 		this.z = z;
+		this.yaw = yaw;
+        this.pitch = pitch;
 	}
 	
 	/**
@@ -559,28 +576,33 @@ public abstract class FakeEntity {
 		}
 	}
 	
-	private final void sendMovePacket(double newX, double newY, double newZ, boolean onGround) {
+	private final void sendMovePacket(double newX, double newY, double newZ, float newYaw, float newPitch) {
 		this.assertNotDead();
 		if (this.visibilityHandler.renderedTo().isEmpty()) return;
 
-		PacketContainer movePacket = new PacketContainer(PacketType.Play.Server.REL_ENTITY_MOVE_LOOK);
-
-		short dx = (short) ((newX * 32 - this.x * 32) * 128);
-		short dy = (short) ((newY * 32 - this.y * 32) * 128);
-		short dz = (short) ((newZ * 32 - this.z * 32) * 128);
-
-		movePacket.getIntegers()
-			.write(0, this.getEntityId());
-		movePacket.getShorts()
-			.write(0, dx)
-			.write(1, dy)
-			.write(2, dz);
-		movePacket.getBytes()
-			.write(0, AngleUtil.fromDegrees(this.yaw))
-			.write(1, AngleUtil.fromDegrees(this.pitch));
-		movePacket.getBooleans()
-			.write(0, onGround);
-
+		if(newX != this.x) {
+		    short dx = (short) ((newX * 32 - this.x * 32) * 128);
+		    movePacket.getShorts().write(0, dx);
+		}
+		
+		if(newY != this.y) {
+		    short dy = (short) ((newY * 32 - this.y * 32) * 128);
+		    movePacket.getShorts().write(1, dy);
+		}
+		
+		if(newZ != this.z) {
+		    short dz = (short) ((newZ * 32 - this.z * 32) * 128);
+            movePacket.getShorts().write(2, dz);
+        }
+		
+		if(newYaw != this.yaw) {
+		    movePacket.getBytes().write(0, AngleUtil.fromDegrees(newYaw));
+		}
+		
+		if(newPitch != this.pitch) {
+		    movePacket.getBytes().write(1, AngleUtil.fromDegrees(newPitch));
+		}
+		
 		try {
 			for (Player p : this.visibilityHandler.renderedTo()) {
 				protocol.sendServerPacket(p, movePacket);
@@ -590,22 +612,30 @@ public abstract class FakeEntity {
 		}
 	}
 
-	private final void sendTeleportPacket(double newX, double newY, double newZ) {
+	private final void sendTeleportPacket(double newX, double newY, double newZ, float newYaw, float newPitch) {
 		this.assertNotDead();
 		if (this.visibilityHandler.renderedTo().isEmpty()) return;
 
-		PacketContainer teleportPacket = new PacketContainer(PacketType.Play.Server.ENTITY_TELEPORT);
-
-		teleportPacket.getIntegers()
-			.write(0, this.getEntityId());
-		teleportPacket.getDoubles()
-			.write(0, newX)
-			.write(1, newY)
-			.write(2, newZ);
-		teleportPacket.getBytes()
-			.write(0, AngleUtil.fromDegrees(this.yaw))
-			.write(1, AngleUtil.fromDegrees(this.pitch));
-
+		if(newX != this.x) {
+		    teleportPacket.getDoubles().write(0, newX);
+		}
+		
+		if(newY != this.y) {
+            teleportPacket.getDoubles().write(1, newY);
+        }
+		
+		if(newZ != this.z) {
+            teleportPacket.getDoubles().write(2, newZ);
+        }
+		
+		if(newYaw != this.yaw) {
+		    teleportPacket.getBytes().write(0, AngleUtil.fromDegrees(newYaw));
+		}
+		
+		if(newPitch != this.pitch) {
+            teleportPacket.getBytes().write(1, AngleUtil.fromDegrees(newPitch));
+        }
+		
 		try {
 			for (Player p : this.visibilityHandler.renderedTo()) {
 				protocol.sendServerPacket(p, teleportPacket);
@@ -622,10 +652,7 @@ public abstract class FakeEntity {
 	 */
 	private final void sendMetaUpdatePacket(Player player) {
 		this.assertNotDead();
-		PacketContainer metaPacket = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
-
-		metaPacket.getIntegers()
-			.write(0, this.getEntityId());
+		
 		metaPacket.getWatchableCollectionModifier()
 			.write(0, this.dataWatcher.getWatchableObjects());
 

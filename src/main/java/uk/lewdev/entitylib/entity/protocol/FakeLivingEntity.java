@@ -82,7 +82,7 @@ public abstract class FakeLivingEntity extends FakeEntity {
 		super.assertNotDead();
 		
 		this.headYaw = yaw;
-		super.getVisibilityHandler().renderedTo().forEach(player -> this.sendHeadYawPacket(player));
+		super.getVisibilityHandler().renderedTo().forEach(this::sendHeadYawPacket);
 	}
 	
 	/**
