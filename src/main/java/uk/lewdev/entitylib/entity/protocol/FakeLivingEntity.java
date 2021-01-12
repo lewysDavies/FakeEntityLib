@@ -48,7 +48,7 @@ public abstract class FakeLivingEntity extends FakeEntity {
 		spawnPacket.getBytes()
 			.write(0, AngleUtil.fromDegrees(super.getYaw()))
 			.write(1, AngleUtil.fromDegrees(super.getPitch()))
-			.write(2, AngleUtil.fromDegrees(super.getPitch()));
+			.write(2, (byte) 0);
 		
 		// Spawn
 		try {
