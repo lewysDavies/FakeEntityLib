@@ -55,7 +55,7 @@ public class VisibilityHandler {
 	 * @return Collection of all players who currently have this entity rendered
 	 */
 	protected final Collection<Player> renderedTo() {
-		return this.renderedTo;
+		return new HashSet<>(this.renderedTo);
 	}
 	
 	/**
@@ -63,7 +63,7 @@ public class VisibilityHandler {
 	 */
 	protected final Collection<? extends Player> visibleTo() {
 	    if(this.globalVisibility) return Bukkit.getOnlinePlayers();
-		return this.visibleTo;
+		return new HashSet<>(this.visibleTo);
 	}
 	
 	/**

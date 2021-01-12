@@ -41,7 +41,7 @@ public class FakeEndCrystal extends FakeEntity {
     
     protected void initDataWatcherObjs() {
         super.getDataWatcher().setObject(this.beamTarget, Optional.empty());
-        super.getDataWatcher().setObject(this.showBottom, true);
+        super.getDataWatcher().setObject(this.showBottom, false);
     } 
 
     @Override
@@ -49,20 +49,16 @@ public class FakeEndCrystal extends FakeEntity {
         super.assertNotDead();
         
         PacketContainer spawnPacket = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY);
-        
         spawnPacket.getIntegers()
-            .write(0, super.getEntityId())
-            .write(1, super.getProtocolId());
+            .write(0, super.getEntityId());
+        spawnPacket.getEntityTypeModifier()
+            .write(0, EntityType.ENDER_CRYSTAL);
         spawnPacket.getUUIDs()
             .write(0, super.getUUID());
         spawnPacket.getDoubles()
             .write(0, super.getX())
             .write(1, super.getY())
             .write(2, super.getZ());
-        spawnPacket.getBytes()
-            .write(0, (byte) 0)
-            .write(1, (byte) 0)
-            .write(2, (byte) 0);
         
         try {
             protocol.sendServerPacket(player, spawnPacket);
@@ -78,7 +74,7 @@ public class FakeEndCrystal extends FakeEntity {
      */
     public void setBeamTarget(Location loc) {
         if(loc != null) {
-            super.getDataWatcher().setObject(this.beamTarget, Optional.of(new BlockPosition((int) loc.getX(), (int) loc.getY(), (int) loc.getZ())));
+            super.getDataWatcher().setObject(this.beamTarget, Optional.of(BlockPosition.getConverter().getGeneric(new BlockPosition((int) loc.getX(), (int) loc.getY(), (int) loc.getZ()))));
         } else {
             super.getDataWatcher().setObject(this.beamTarget, Optional.empty());
         }
@@ -90,7 +86,12 @@ public class FakeEndCrystal extends FakeEntity {
      * @param position (nullable)
      */
     public void setBeamTarget(BlockPosition position) {
-        super.getDataWatcher().setObject(this.beamTarget, Optional.ofNullable(position));
+        if(position == null) {
+            super.getDataWatcher().setObject(this.beamTarget, Optional.empty());
+        } else {
+            super.getDataWatcher().setObject(this.beamTarget, Optional.of(BlockPosition.getConverter().getGeneric(position)));
+        }
+        
         super.sendMetaUpdate();
     }
     
