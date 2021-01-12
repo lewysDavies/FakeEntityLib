@@ -34,7 +34,7 @@ public class FakeEndCrystal extends FakeEntity {
      * @param y
      * @param z
      */
-    protected FakeEndCrystal(World world, double x, double y, double z) {
+    public FakeEndCrystal(World world, double x, double y, double z) {
         super(EntityType.ENDER_CRYSTAL, UUID.randomUUID(), world, x, y, z, 0, 0);
         this.initDataWatcherObjs();
     }
