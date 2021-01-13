@@ -1,10 +1,12 @@
 package uk.lewdev.entitylib.entity.protocol;
 
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+
+import com.google.common.collect.Sets;
 
 /**
  * @author Lewys Davies (Lew_)
@@ -15,8 +17,8 @@ public class VisibilityHandler {
 	
 	private final FakeEntity entity;
 	
-	private final HashSet<Player> visibleTo  = new HashSet<Player>();   // Players who could see this entity, if render conditions are met
-	private final HashSet<Player> renderedTo = new HashSet<Player>();  // Players this entity is currently rendered to
+	private final Set<Player> visibleTo  = Sets.newConcurrentHashSet();   // Players who could see this entity, if render conditions are met
+	private final Set<Player> renderedTo = Sets.newConcurrentHashSet();   // Players this entity is currently rendered to
 	
 	private boolean globalVisibility = false;
 	
@@ -55,7 +57,7 @@ public class VisibilityHandler {
 	 * @return Collection of all players who currently have this entity rendered
 	 */
 	protected final Collection<Player> renderedTo() {
-		return new HashSet<>(this.renderedTo);
+		return this.renderedTo;
 	}
 	
 	/**
@@ -63,7 +65,7 @@ public class VisibilityHandler {
 	 */
 	protected final Collection<? extends Player> visibleTo() {
 	    if(this.globalVisibility) return Bukkit.getOnlinePlayers();
-		return new HashSet<>(this.visibleTo);
+		return this.visibleTo;
 	}
 	
 	/**
@@ -173,8 +175,7 @@ public class VisibilityHandler {
 	 * @param player
 	 */
 	private final void render(Player player) {
-		if(! this.renderedTo.contains(player)) {
-			this.renderedTo.add(player);
+		if(this.renderedTo.add(player)) {
 			this.entity.sendSpawnPacket(player);
 		}
 	}
@@ -186,8 +187,7 @@ public class VisibilityHandler {
 	 * @param player
 	 */
 	private final void unRender(Player player) {
-		if(this.renderedTo.contains(player)) {
-			this.renderedTo.remove(player);
+		if(this.renderedTo.remove(player)) {
 			this.entity.sendDestroyPacket(player);
 		}
 	}
