@@ -27,6 +27,8 @@ public class FakeEndCrystal extends FakeEntity {
     
     private WrappedDataWatcherObject showBottom = new WrappedDataWatcherObject(8, 
             Registry.get(Boolean.class));
+    
+    private static Optional<Object> EMPTY = Optional.empty();
 
     /**
      * @param world
@@ -73,10 +75,10 @@ public class FakeEndCrystal extends FakeEntity {
      * @param loc (nullable)
      */
     public void setBeamTarget(Location loc) {
-        if(loc != null) {
-            super.getDataWatcher().setObject(this.beamTarget, Optional.of(BlockPosition.getConverter().getGeneric(new BlockPosition((int) loc.getX(), (int) loc.getY(), (int) loc.getZ()))));
+        if(loc == null) {
+            super.getDataWatcher().setObject(this.beamTarget, EMPTY);
         } else {
-            super.getDataWatcher().setObject(this.beamTarget, Optional.empty());
+            super.getDataWatcher().setObject(this.beamTarget, Optional.of(BlockPosition.getConverter().getGeneric(new BlockPosition((int) loc.getX(), (int) loc.getY(), (int) loc.getZ()))));
         }
         
         super.sendMetaUpdate();
@@ -87,9 +89,25 @@ public class FakeEndCrystal extends FakeEntity {
      */
     public void setBeamTarget(BlockPosition position) {
         if(position == null) {
-            super.getDataWatcher().setObject(this.beamTarget, Optional.empty());
+            super.getDataWatcher().setObject(this.beamTarget, EMPTY);
         } else {
             super.getDataWatcher().setObject(this.beamTarget, Optional.of(BlockPosition.getConverter().getGeneric(position)));
+        }
+        
+        super.sendMetaUpdate();
+    }
+    
+    /**
+     * For the OPTIMAL performance. Use only if you know wtf you're doing. You will crash
+     * stuff if you use this wrong.
+     * 
+     * @param nmsBlockPos from BlockPosition.getConverter().getGeneric()
+     */
+    public void setBeamTarget(Optional<Object> nmsBlockPos) {
+        if(nmsBlockPos == null) {
+            super.getDataWatcher().setObject(this.beamTarget, EMPTY);
+        } else {
+            super.getDataWatcher().setObject(this.beamTarget, nmsBlockPos);
         }
         
         super.sendMetaUpdate();
