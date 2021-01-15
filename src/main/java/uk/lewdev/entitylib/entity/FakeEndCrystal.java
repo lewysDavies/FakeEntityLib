@@ -113,6 +113,14 @@ public class FakeEndCrystal extends FakeEntity {
         super.sendMetaUpdate();
     }
     
+    /**
+     * Remove any target from this end crystal
+     */
+    public void clearBeamTarget() {
+        super.getDataWatcher().setObject(this.beamTarget, EMPTY);
+        super.sendMetaUpdate();
+    }
+    
     public void setShowBottom(boolean showBottom) {
         super.getDataWatcher().setObject(this.showBottom, showBottom);
         super.sendMetaUpdate();
