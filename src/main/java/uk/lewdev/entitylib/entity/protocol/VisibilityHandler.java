@@ -177,6 +177,9 @@ public class VisibilityHandler {
 	private final void render(Player player) {
 		if(this.renderedTo.add(player)) {
 			this.entity.sendSpawnPacket(player);
+			if(this.entity.hasPassengers()) {
+                this.entity.sendMountPackets();
+            }
 		}
 	}
 	

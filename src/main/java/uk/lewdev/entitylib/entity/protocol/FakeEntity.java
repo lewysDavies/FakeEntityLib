@@ -1,7 +1,10 @@
 package uk.lewdev.entitylib.entity.protocol;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -15,8 +18,8 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.wrappers.EnumWrappers.EntityPose;
 import com.comphenix.protocol.wrappers.EnumWrappers;
+import com.comphenix.protocol.wrappers.EnumWrappers.EntityPose;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
@@ -82,7 +85,10 @@ public abstract class FakeEntity {
 	private PacketContainer movePacket = new PacketContainer(PacketType.Play.Server.REL_ENTITY_MOVE_LOOK);
 	private PacketContainer teleportPacket = new PacketContainer(PacketType.Play.Server.ENTITY_TELEPORT);
 	private PacketContainer metaPacket = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
-
+	
+	private Integer vehicleEid = null;
+	private Set<Integer> passengerEids = new HashSet<>();
+	
 	protected FakeEntity(EntityType type, UUID uuid, World world, double x, double y, double z, float yaw, float pitch) {
 		this.entityId = EntityID.nextAndIncrement();
 		this.uuid = uuid;
@@ -536,6 +542,45 @@ public abstract class FakeEntity {
 	    this.visibilityHandler.setGloballyVisible(visibleToAll);
 	}
 	
+	public void mountVehicle(int eid) {
+	    this.vehicleEid = eid;
+	    this.sendMountPackets();
+	}
+	
+	public void unmountVehicle() {
+	    if(this.vehicleEid != null) {
+	        this.sendUnMountFromVehicle(this.vehicleEid);
+	    }
+	    this.vehicleEid = null;
+	}
+	
+	public void addPassengers(Integer... eids) {
+	    this.passengerEids.addAll(Arrays.asList(eids));
+	    this.sendMountPackets();
+	}
+	
+	public void removePassenger(int eid) {
+	    this.passengerEids.remove(eid);
+	    this.sendMountPackets();
+	}
+	
+	public void removePassengers() {
+	    this.passengerEids.clear();
+	    this.sendMountPackets();
+	}
+	
+	public Optional<Integer> getVehicleEid() {
+	    return Optional.ofNullable(this.vehicleEid);
+	}
+	
+	public int[] getPassengerEids() {
+	    return this.passengerEids.stream().mapToInt(i->i).toArray();
+	}
+	
+	public boolean hasPassengers() {
+	    return !this.passengerEids.isEmpty();
+	}
+	
 	/**
 	 * @return this entities unique id
 	 */
@@ -571,10 +616,60 @@ public abstract class FakeEntity {
 	 */
 	protected final void sendMetaUpdate() {
 		this.assertNotDead();
+		
+		this.metaPacket.getWatchableCollectionModifier()
+            .write(0, this.dataWatcher.getWatchableObjects());
+
 		for (Player p : this.visibilityHandler.renderedTo()) {
-			this.sendMetaUpdatePacket(p);
+		    try {
+	            protocol.sendServerPacket(p, metaPacket);
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
 		}
 	}
+	
+	/**
+     * Update this entities passengers / vehicle state
+     */
+    protected final void sendMountPackets() {
+        // https://wiki.vg/Protocol#Set_Passengers
+        PacketContainer mountPacket = new PacketContainer(PacketType.Play.Server.MOUNT);
+        
+        // If this entity is mounted, send that mount packet
+        if(this.vehicleEid != null) {
+            mountPacket.getIntegers()
+                .write(0, this.vehicleEid)
+                .write(1, 1);
+            mountPacket.getIntegerArrays()
+                .write(0, new int[] {this.entityId});
+            
+            try {
+                for (Player p : this.visibilityHandler.renderedTo()) {
+                    protocol.sendServerPacket(p, mountPacket);
+                }
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        }
+        
+        // Then mount this entities passengers
+        int[] passengers = this.getPassengerEids();
+        
+        mountPacket.getIntegers()
+            .write(0, this.entityId)
+            .write(1, passengers.length);
+        mountPacket.getIntegerArrays()
+            .write(0, this.getPassengerEids());
+        
+        try {
+            for (Player p : this.visibilityHandler.renderedTo()) {
+                protocol.sendServerPacket(p, mountPacket);
+            }
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+    }
 	
 	private final void sendMovePacket(double newX, double newY, double newZ, float newYaw, float newPitch) {
 		this.assertNotDead();
@@ -644,25 +739,29 @@ public abstract class FakeEntity {
 			e.printStackTrace();
 		}
 	}
-
+	
 	/**
-	 * Send the update packet to a single player
-	 * 
-	 * @param player
+	 * Remove all passengers from a vehicle
+	 * @param vehicleEid
 	 */
-	private final void sendMetaUpdatePacket(Player player) {
-		this.assertNotDead();
-		
-		metaPacket.getWatchableCollectionModifier()
-			.write(0, this.dataWatcher.getWatchableObjects());
-
-		try {
-			protocol.sendServerPacket(player, metaPacket);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	private final void sendUnMountFromVehicle(int vehicleEid) {
+	    // https://wiki.vg/Protocol#Set_Passengers
+	    PacketContainer mountPacket = new PacketContainer(PacketType.Play.Server.MOUNT);
+	    mountPacket.getIntegers()
+            .write(0, vehicleEid)
+            .write(1, 0);
+	    mountPacket.getIntegerArrays()
+            .write(0, new int[0]);
+    
+        try {
+            for (Player p : this.visibilityHandler.renderedTo()) {
+                protocol.sendServerPacket(p, mountPacket);
+            }
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
 	}
-
+	
 	/**
 	 * @throws IllegalStateException If entity is dead
 	 */
