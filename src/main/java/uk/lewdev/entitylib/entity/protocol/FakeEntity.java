@@ -375,6 +375,17 @@ public abstract class FakeEntity {
 	}
 	
 	/**
+	 * @param json
+	 */
+	public void setCustomNameJson(String json) {
+        this.assertNotDead();
+        
+        this.customName = json;
+        this.dataWatcher.setObject(this.customNameWatcher, Optional.of(WrappedChatComponent.fromJson(json).getHandle()));
+        this.sendMetaUpdate();
+    }
+	
+	/**
 	 * @param swimming
 	 */
 	public void setSwimming(boolean swimming) {
@@ -639,8 +650,7 @@ public abstract class FakeEntity {
         // If this entity is mounted, send that mount packet
         if(this.vehicleEid != null) {
             mountPacket.getIntegers()
-                .write(0, this.vehicleEid)
-                .write(1, 1);
+                .write(0, this.vehicleEid);
             mountPacket.getIntegerArrays()
                 .write(0, new int[] {this.entityId});
             
@@ -654,11 +664,8 @@ public abstract class FakeEntity {
         }
         
         // Then mount this entities passengers
-        int[] passengers = this.getPassengerEids();
-        
         mountPacket.getIntegers()
-            .write(0, this.entityId)
-            .write(1, passengers.length);
+            .write(0, this.entityId);
         mountPacket.getIntegerArrays()
             .write(0, this.getPassengerEids());
         
@@ -748,8 +755,7 @@ public abstract class FakeEntity {
 	    // https://wiki.vg/Protocol#Set_Passengers
 	    PacketContainer mountPacket = new PacketContainer(PacketType.Play.Server.MOUNT);
 	    mountPacket.getIntegers()
-            .write(0, vehicleEid)
-            .write(1, 0);
+            .write(0, vehicleEid);
 	    mountPacket.getIntegerArrays()
             .write(0, new int[0]);
     
