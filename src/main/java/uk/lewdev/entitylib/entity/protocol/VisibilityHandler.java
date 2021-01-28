@@ -1,5 +1,6 @@
 package uk.lewdev.entitylib.entity.protocol;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 
@@ -69,7 +70,7 @@ public class VisibilityHandler {
 	protected final Collection<? extends Player> visibleTo() {
 	    if(this.globalVisibility) {
 	        if(this.invisibleTo.isEmpty()) return Bukkit.getOnlinePlayers();
-	        Collection<? extends Player> players = Bukkit.getOnlinePlayers();
+	        Collection<? extends Player> players = new ArrayList<Player>(Bukkit.getOnlinePlayers());
 	        players.removeAll(this.invisibleTo);
 	        return players;
 	    }
