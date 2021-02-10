@@ -449,6 +449,7 @@ public abstract class FakeEntity {
 	 * @param z
 	 */
 	public final void setLocation(Location loc) {
+	    this.world = loc.getWorld();
 		this.setLocation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
 	}
 
@@ -522,6 +523,7 @@ public abstract class FakeEntity {
 	 * @param loc
 	 */
 	public final void move(Location loc) {
+	    this.world = loc.getWorld();
 		this.move(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
 	}
 
