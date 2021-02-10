@@ -206,22 +206,14 @@ public abstract class FakeEntity {
 	 * @return the world
 	 */
 	public final World getWorld() {
-		return world;
-	}
-
-	/**
-	 * @param world the world to set
-	 */
-	public final void setWorld(World world) {
-		this.assertNotDead();
-		this.world = world;
+		return this.world;
 	}
 
 	/**
 	 * @return the x
 	 */
 	public final double getX() {
-		return x;
+		return this.x;
 	}
 
 	/**
@@ -236,7 +228,7 @@ public abstract class FakeEntity {
 	 * @return the y
 	 */
 	public final double getY() {
-		return y;
+		return this.y;
 	}
 
 	/**
@@ -251,7 +243,7 @@ public abstract class FakeEntity {
 	 * @return the z
 	 */
 	public final double getZ() {
-		return z;
+		return this.z;
 	}
 
 	/**
@@ -444,12 +436,10 @@ public abstract class FakeEntity {
 	 *          setLocation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(),
 	 *          loc.getPitch())}
 	 * 
-	 * @param x
-	 * @param y
-	 * @param z
+	 * @param loc
 	 */
 	public final void setLocation(Location loc) {
-	    this.world = loc.getWorld();
+	    if(! loc.getWorld().equals(this.world)) throw new IllegalArgumentException("Cannot change an entity's world");
 		this.setLocation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
 	}
 
@@ -523,7 +513,7 @@ public abstract class FakeEntity {
 	 * @param loc
 	 */
 	public final void move(Location loc) {
-	    this.world = loc.getWorld();
+	    if(! loc.getWorld().equals(this.world)) throw new IllegalArgumentException("Cannot change an entity's world");
 		this.move(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
 	}
 

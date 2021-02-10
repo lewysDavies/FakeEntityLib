@@ -16,7 +16,7 @@ import com.google.common.collect.Sets;
  */
 public class VisibilityHandler {
 	
-	private final static int RENDER_DISTANCE = 150; // Blocks
+	private final static int RENDER_DISTANCE = 100; // Blocks
 	
 	private final static Predicate<Player> NOT_ONLINE = Predicates.not(Player::isOnline);
 	
@@ -45,7 +45,7 @@ public class VisibilityHandler {
 	 * Update all players who could see this entity
 	 * Removes any players who are no longer with us : (
 	 */
-	protected final void tick() {
+	protected synchronized final void tick() {
 		if(this.entity.isDead()) return;
 		
 		// Remove any logged out players
@@ -55,7 +55,7 @@ public class VisibilityHandler {
 		
 		// Update players
 		if(this.globalVisibility) {
-            for(Player player : Bukkit.getOnlinePlayers()) {
+            for(Player player : this.entity.getWorld().getPlayers()) {
                 this.update(player);
             }
         } else {
@@ -146,20 +146,22 @@ public class VisibilityHandler {
 	 * @param player
 	 */
 	private final void update(Player player) {
-		// Calculate current state
-		boolean isCurrentlyRendered = this.renderedTo.contains(player);
-		boolean shouldRender = this.shouldRenderTo(player);
-		
-		if(isCurrentlyRendered == shouldRender) {
-			return; // Everything is in the correct state : )
-		}
-		
-		// Render or Remove, depending on new state
-		if(isCurrentlyRendered && !shouldRender) {
-			this.unRender(player);
-		} else {
-			this.render(player);
-		}
+	    synchronized(player) {
+	        // Calculate current state
+	        boolean isCurrentlyRendered = this.renderedTo.contains(player);
+	        boolean shouldRender = this.shouldRenderTo(player);
+	        
+	        if(isCurrentlyRendered == shouldRender) {
+	            return; // Everything is in the correct state : )
+	        }
+	        
+	        // Render or Remove, depending on new state
+	        if(isCurrentlyRendered && !shouldRender) {
+	            this.unRender(player);
+	        } else {
+	            this.render(player);
+	        }
+	    }
 	}
 	
 	/**
@@ -189,12 +191,14 @@ public class VisibilityHandler {
 	 * @param player
 	 */
 	private final void render(Player player) {
-		if(this.renderedTo.add(player)) {
-			this.entity.sendSpawnPacket(player);
-			if(this.entity.hasPassengers()) {
-                this.entity.sendMountPackets();
-            }
-		}
+	    synchronized(player) {
+	        if(this.renderedTo.add(player)) {
+	            this.entity.sendSpawnPacket(player);
+	            if(this.entity.hasPassengers()) {
+	                this.entity.sendMountPackets();
+	            }
+	        }
+	    }
 	}
 	
 	/**
@@ -204,8 +208,10 @@ public class VisibilityHandler {
 	 * @param player
 	 */
 	private final void unRender(Player player) {
-		if(this.renderedTo.remove(player)) {
-			this.entity.sendDestroyPacket(player);
-		}
+	    synchronized(player) {
+	        if(this.renderedTo.remove(player)) {
+	            this.entity.sendDestroyPacket(player);
+	        }
+	    }
 	}
 }
