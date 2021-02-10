@@ -9,7 +9,7 @@ public class EntityAsyncRenderTicker extends BukkitRunnable {
 	
 	@Override
 	public void run() {
-		FakeEntity.ALL_ALIVE_INSTANCES.forEach((key, value) -> {
+		FakeEntity.ALL_ALIVE_INSTANCES.values().forEach(value -> {
 			value.getVisibilityHandler().tick();
 		});
 	}

@@ -3,10 +3,12 @@ package uk.lewdev.entitylib.entity.protocol;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import com.google.common.base.Predicates;
 import com.google.common.collect.Sets;
 
 /**
@@ -15,6 +17,8 @@ import com.google.common.collect.Sets;
 public class VisibilityHandler {
 	
 	private final static int RENDER_DISTANCE = 150; // Blocks
+	
+	private final static Predicate<Player> NOT_ONLINE = Predicates.not(Player::isOnline);
 	
 	private final FakeEntity entity;
 	
@@ -45,15 +49,19 @@ public class VisibilityHandler {
 		if(this.entity.isDead()) return;
 		
 		// Remove any logged out players
-		this.visibleTo.removeIf(player -> !player.isOnline());
-		this.renderedTo.removeIf(player -> !player.isOnline());
-		this.invisibleTo.removeIf(player -> !player.isOnline());
+		this.visibleTo.removeIf(NOT_ONLINE);
+		this.renderedTo.removeIf(NOT_ONLINE);
+		this.invisibleTo.removeIf(NOT_ONLINE);
 		
 		// Update players
 		if(this.globalVisibility) {
-            this.entity.getWorld().getPlayers().forEach(this::update);
+            for(Player player : Bukkit.getOnlinePlayers()) {
+                this.update(player);
+            }
         } else {
-            this.visibleTo.forEach(this::update);
+            for(Player player : this.visibleTo) {
+                this.update(player);
+            }
         }
 	}
 	
