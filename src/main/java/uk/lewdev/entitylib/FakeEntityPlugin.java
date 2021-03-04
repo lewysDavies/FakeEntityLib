@@ -15,7 +15,7 @@ public class FakeEntityPlugin extends JavaPlugin {
 	public void onEnable() {
 		instance = this;
 		
-		new EntityAsyncRenderTicker().runTaskTimerAsynchronously(this, 20, 20);
+		new EntityAsyncRenderTicker().runTaskTimerAsynchronously(this, 10, 10);
 		//new ProtocolLibListeners();
 	}
 	

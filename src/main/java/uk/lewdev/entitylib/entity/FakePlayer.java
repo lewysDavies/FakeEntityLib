@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -37,7 +38,7 @@ public class FakePlayer extends FakeEquippableEntity {
     private static String DEFAULT_SKIN = "eyJ0aW1lc3RhbXAiOjE1NjIwNzc3ODMzMzksInByb2ZpbGVJZCI6IjdkYTJhYjNhOTNjYTQ4ZWU4MzA0OGFmYzNiODBlNjhlIiwicHJvZmlsZU5hbWUiOiJHb2xkYXBmZWwiLCJzaWduYXR1cmVSZXF1aXJlZCI6dHJ1ZSwidGV4dHVyZXMiOnsiU0tJTiI6eyJ1cmwiOiJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlLzkzYjUwZDdlODM4M2Y2NTZhODY1YTlhZjA1ZTNmYzk3ZWM2ZWZmOGNlYzU0NmFkZmI1MGI1M2UzZGU0ZGU2MjYifX19";
     private static String DEFAULT_SKIN_SIG = "dubcivWbARSmeEN1NJg89tvVFUuiFwZ3NBmPLNlUX4qwSDg3eqHyCEcl8fRu5Cf9R4Y4YQ782K+WtUszeRkkywChtZtyJ1jF7YbD2UDOH6N/gqTBETiKgkGrXyJ6idIfQKZ1LRhCAlj44K7bpW5OTjyyZESTmWkGc4AEXrIfEtGcvRA5oKk2JencxOwtoTnRkwMOBcZ1mezdHJGv5/iLc45B0P19SOo4yxlRM1zX/88g2euQyy+QUcXa2lROhIaARjDpvwd8BePWA0xnKD+T7h/UXl5FTouDCntcI8w0lOpo7FEOwgtMvHXo788iIZ4rJ2LWbHCIki7Dboj7ILyrAOXITCiOfYnn88ZDLW0bnah06Mqk/XkmzqamkYL8KsBAQK2u6e5mgOL0kzyRj3vKsWpbzQNFYtRDbVfaEBN+OleyeQTWlSPn2Ka7g9IzkQ21lrkYc683eP4FZABBCsPeKyXpzU0A4DjuG5WHitdsMue81CfbxwSkCgUI5DU/LDgbWDl+4S+MeLhZKg/cK+AmbPhDU9/KnGoHknUts7PhZOrz0qDsgCqOsPpYtH5SXMuSA0Anu5ozikbAdMnMVS8G4scKl0WengVKBkL+fGe6m/J3JFFyraoOQ0mL4pIUZd05MxGtpaMs2OROsn/lbH6l5dhgcsJIsKwStO6RUl87TBs=";
 	
-    private WrappedGameProfile playerProfile;
+    private final WrappedGameProfile playerProfile;
 	
 	private final WrappedDataWatcherObject playerByteWatcher = new WrappedDataWatcherObject(PlayerMetaData.playerByteIndex(), Registry.get(Byte.class));
     
@@ -61,6 +62,18 @@ public class FakePlayer extends FakeEquippableEntity {
     public FakePlayer(String name, World world, double x, double y, double z) {
 		this(name, world, DEFAULT_SKIN, DEFAULT_SKIN_SIG, x, y, z, 0, 0, 0);
 	}
+    
+    public FakePlayer(OfflinePlayer player, Location loc) {
+        super(EntityType.PLAYER, UUID.randomUUID(), loc.getWorld(), loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch(), loc.getYaw());
+        this.name = player.getName();
+        this.playerProfile = WrappedGameProfile.fromOfflinePlayer(player);
+    }
+    
+    public FakePlayer(Player player, Location loc) {
+        super(EntityType.PLAYER, UUID.randomUUID(), loc.getWorld(), loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch(), loc.getYaw());
+        this.name = player.getName();
+        this.playerProfile = WrappedGameProfile.fromPlayer(player);
+    }
 	
 	@Override
 	public void setCustomName(String name) {
@@ -75,22 +88,16 @@ public class FakePlayer extends FakeEquippableEntity {
 	
 	@Override
 	public void setCustomNameVisible(boolean visible) {
-		//TODO Not implemented
 		return; // Always visible
 	}
 	
 	@Override
 	public boolean isCustomNameVisible() {
-		//TODO Not implemented
-		return true;
+		return true; // Always visible
 	}
 	
 	public final void showSecondSkinLayer(boolean enabled) {
-		if(enabled) {
-			super.getDataWatcher().setObject(this.playerByteWatcher, Byte.MAX_VALUE);
-		} else {
-			super.getDataWatcher().setObject(this.playerByteWatcher, 0);
-		}
+	    super.getDataWatcher().setObject(this.playerByteWatcher, enabled ? Byte.MAX_VALUE : 0);
 		super.sendMetaUpdate();
 	}
 	
