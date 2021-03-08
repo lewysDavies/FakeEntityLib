@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -20,6 +21,7 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObje
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.comphenix.protocol.wrappers.WrappedSignedProperty;
 
+import uk.lewdev.entitylib.FakeEntityPlugin;
 import uk.lewdev.entitylib.entity.protocol.FakeEquippableEntity;
 import uk.lewdev.entitylib.entity.protocol.wrappers.WrapperPlayServerNamedEntitySpawn;
 import uk.lewdev.entitylib.entity.protocol.wrappers.WrapperPlayServerPlayerInfo;
@@ -66,11 +68,7 @@ public class FakePlayer extends FakeEquippableEntity {
 	}
     
     public FakePlayer(OfflinePlayer player, Location loc) {
-        super(EntityType.PLAYER, UUID.randomUUID(), loc.getWorld(), loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch(), loc.getYaw());
-        this.name = player.getName();
-        super.setCustomName(this.name);
-        
-        this.playerProfile = WrappedGameProfile.fromOfflinePlayer(player);
+        this(player.getPlayer(), loc);
     }
     
     public FakePlayer(Player player, Location loc) {
@@ -78,13 +76,10 @@ public class FakePlayer extends FakeEquippableEntity {
         this.name = player.getName();
         super.setCustomName(this.name);
         
-        this.playerProfile = WrappedGameProfile.fromPlayer(player);
+        WrappedGameProfile actualProfile = WrappedGameProfile.fromPlayer(player);
+        this.playerProfile = new WrappedGameProfile(super.getUUID(), this.name);
+        this.playerProfile.getProperties().put("textures", actualProfile.getProperties().get("textures").iterator().next());
     }
-	
-	@Override
-	public boolean isCustomNameVisible() {
-		return true; // Always visible
-	}
 	
 	public final String getName() {
 	    return this.name;
@@ -125,6 +120,15 @@ public class FakePlayer extends FakeEquippableEntity {
 		// Set head yaw to current
 		this.sendHeadYawPacket(player);
 		this.sendMetaUpdate();
+		
+		Bukkit.getScheduler().runTaskLater(FakeEntityPlugin.instance, () -> {
+            playerInfoPacket.setAction(PlayerInfoAction.REMOVE_PLAYER);
+            try {
+                protocol.sendServerPacket(player, playerInfoPacket.getHandle());
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        }, 10);
 	}
 	
 	private final List<PlayerInfoData> getPlayerInfoData() {
