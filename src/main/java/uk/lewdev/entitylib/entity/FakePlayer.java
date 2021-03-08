@@ -48,6 +48,8 @@ public class FakePlayer extends FakeEquippableEntity {
 		super(EntityType.PLAYER, UUID.randomUUID(), world, x, y, z, yaw, headPitch, headYaw);
 		
 		this.name = name;
+		super.setCustomName(this.name);
+		
 		this.playerProfile = new WrappedGameProfile(super.getUUID(), this.name);
 		this.playerProfile.getProperties()
     	.put("textures", new WrappedSignedProperty("textures", 
@@ -66,34 +68,26 @@ public class FakePlayer extends FakeEquippableEntity {
     public FakePlayer(OfflinePlayer player, Location loc) {
         super(EntityType.PLAYER, UUID.randomUUID(), loc.getWorld(), loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch(), loc.getYaw());
         this.name = player.getName();
+        super.setCustomName(this.name);
+        
         this.playerProfile = WrappedGameProfile.fromOfflinePlayer(player);
     }
     
     public FakePlayer(Player player, Location loc) {
         super(EntityType.PLAYER, UUID.randomUUID(), loc.getWorld(), loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch(), loc.getYaw());
         this.name = player.getName();
+        super.setCustomName(this.name);
+        
         this.playerProfile = WrappedGameProfile.fromPlayer(player);
     }
 	
 	@Override
-	public void setCustomName(String name) {
-		//TODO Not implemented
-	}
-	
-	@Override
-	public String getCustomName() {
-		//TODO Not implemented
-		return this.name;
-	}
-	
-	@Override
-	public void setCustomNameVisible(boolean visible) {
-		return; // Always visible
-	}
-	
-	@Override
 	public boolean isCustomNameVisible() {
 		return true; // Always visible
+	}
+	
+	public final String getName() {
+	    return this.name;
 	}
 	
 	public final void showSecondSkinLayer(boolean enabled) {
