@@ -93,14 +93,24 @@ public abstract class FakeLivingEntity extends FakeEntity {
 		super.assertNotDead();
 		
 		PacketContainer lookPacket = new PacketContainer(PacketType.Play.Server.ENTITY_HEAD_ROTATION);
+		PacketContainer rotatePacket = new PacketContainer(PacketType.Play.Server.ENTITY_LOOK);
 		
 		lookPacket.getIntegers()
 			.write(0, super.getEntityId());
 		lookPacket.getBytes()
 			.write(0, AngleUtil.fromDegrees(this.headYaw));
 		
+		rotatePacket.getIntegers()
+		    .write(0, super.getEntityId());
+		rotatePacket.getBytes()
+		    .write(0, AngleUtil.fromDegrees(this.headYaw))
+		    .write(1, AngleUtil.fromDegrees(0));
+		rotatePacket.getBooleans()
+		    .write(0, true);
+		
 		try {
 			protocol.sendServerPacket(player, lookPacket);
+			protocol.sendServerPacket(player, rotatePacket);
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
 		}
