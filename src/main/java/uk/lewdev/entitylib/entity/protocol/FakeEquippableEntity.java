@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -53,6 +54,8 @@ public class FakeEquippableEntity extends FakeLivingEntity {
 
     public void setItem(ItemSlot slot, ItemStack item) {
         this.assertNotDead();
+        
+        if(item == null) item = new ItemStack(Material.AIR);
         
         this.equipment.put(slot, item);
         
