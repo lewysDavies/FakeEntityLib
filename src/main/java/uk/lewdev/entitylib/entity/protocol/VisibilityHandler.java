@@ -53,11 +53,11 @@ public class VisibilityHandler {
 		this.renderedTo.removeIf(NOT_ONLINE);
 		this.invisibleTo.removeIf(NOT_ONLINE);
 		
-		// Update players
+		// Update visibility 
 		if(this.globalVisibility) {
-            for(Player player : this.entity.getWorld().getPlayers()) {
-                this.update(player);
-            }
+		    for(Player player : Bukkit.getOnlinePlayers()) {
+		        this.update(player);
+		    }
         } else {
             for(Player player : this.visibleTo) {
                 this.update(player);
@@ -169,7 +169,7 @@ public class VisibilityHandler {
 	 * @return True if player is in the same world, and within render distance
 	 */
 	private final boolean shouldRenderTo(Player player) {
-		 return (! this.invisibleTo.contains(player)) && this.entity.getWorld().equals(player.getWorld())
+		 return this.entity.getWorld().equals(player.getWorld()) && (! this.invisibleTo.contains(player))
 				 && this.isInRange(player);
 	}
 	
