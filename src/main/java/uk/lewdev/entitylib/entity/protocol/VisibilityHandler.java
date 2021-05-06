@@ -146,19 +146,23 @@ public class VisibilityHandler {
 	 * @param player
 	 */
 	private final void update(Player player) {
+	    Bukkit.broadcastMessage("Updating " + player.getName());
 	    synchronized(player) {
 	        // Calculate current state
 	        boolean isCurrentlyRendered = this.renderedTo.contains(player);
 	        boolean shouldRender = this.shouldRenderTo(player);
 	        
 	        if(isCurrentlyRendered == shouldRender) {
+	            Bukkit.broadcastMessage("Correct state for " + player.getName());
 	            return; // Everything is in the correct state : )
 	        }
 	        
 	        // Render or Remove, depending on new state
 	        if(isCurrentlyRendered && !shouldRender) {
+	            Bukkit.broadcastMessage("Un-rendering to " + player.getName());
 	            this.unRender(player);
 	        } else {
+	            Bukkit.broadcastMessage("Rendering to " + player.getName());
 	            this.render(player);
 	        }
 	    }
