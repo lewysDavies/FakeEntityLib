@@ -67,4 +67,11 @@
 			</plugin>
 		</plugins>
 	</build>
+	<distributionManagement>
+	    <repository>
+	      <id>fakeentitylib</id>
+	      <name>Fake Entity Lib</name>
+	      <url>https://maven.pkg.github.com/ShayPunter/FakeEntityLib</url>
+	    </repository>
+	</distributionManagement>
 </project>
