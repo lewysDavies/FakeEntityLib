@@ -14,7 +14,12 @@
 	<properties>
 		<pl.ver>1.3.7</pl.ver>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.scm.id>github</project.scm.id>
 	</properties>
+
+	<scm>
+		<developerConnection>scm:git:https://github.com/ShayPunter/FakeEntityLib.git</developerConnection>
+	</scm>
 
 	<repositories>
 		<!-- Protocol Lib Repo -->
@@ -67,10 +72,11 @@
 			</plugin>
 		</plugins>
 	</build>
+
 	<distributionManagement>
 	    <repository>
-	      <id>fakeentitylib</id>
-	      <name>Fake Entity Lib</name>
+	      <id>github</id>
+	      <name>Github Package</name>
 	      <url>https://maven.pkg.github.com/ShayPunter/FakeEntityLib</url>
 	    </repository>
 	</distributionManagement>
