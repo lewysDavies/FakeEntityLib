@@ -26,7 +26,7 @@ public class FakeEquippableEntity extends FakeLivingEntity {
 
     protected FakeEquippableEntity(EntityType type, UUID uuid, World world, double x, double y, double z, float yaw,
             float headPitch, float headYaw) {
-        super(type, uuid, world, x, y, z, yaw, headPitch);
+        super(type, uuid, world, x, y, z, yaw, headPitch, headYaw);
     }
 
     protected FakeEquippableEntity(EntityType type, UUID uuid, World world, double x, double y, double z, float yaw,
