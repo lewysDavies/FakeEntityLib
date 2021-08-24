@@ -20,7 +20,6 @@ public enum MCVersion {
 		for (MCVersion version : MCVersion.values()) {
 			if(curVerStr.toLowerCase().contains(version.versionString)) {
 				CUR_VERSION = version;
-				Bukkit.broadcastMessage(CUR_VERSION + " is version");
 				break;
 			}
 		}
