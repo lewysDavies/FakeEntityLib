@@ -69,31 +69,34 @@ public abstract class FakeInsentient extends FakeLivingEntity {
 	}
 	
 	private enum InsentientMetaData {
-		MC1_15(14, 0, 1);
+		MC1_15(14, 0, 1), 
+		MC1_17(15, 0, 1);
 		
 		private int insentientByteIndex, aiIndex, leftHandIndex;
 		
 		private InsentientMetaData(int insentientByteIndex, int aiIndex, int leftHandIndex) {
 			this.insentientByteIndex = insentientByteIndex;
+			this.aiIndex = aiIndex;
+			this.leftHandIndex = leftHandIndex;
 		}
 		
-		public static InsentientMetaData curVer() {
-			switch (MCVersion.CUR_VERSION()) {
-			default:
-				return MC1_15;
-			}
-		}
+		private static InsentientMetaData get() {
+            if(MCVersion.CUR_VERSION().ordinal() >= MCVersion.V1_17.ordinal()) {
+                return MC1_17;
+            }
+            return MC1_15;
+        }
 		
 		public static int byteIndex() {
-			return curVer().insentientByteIndex;
+			return get().insentientByteIndex;
 		}
 		
 		public static int aiBit() {
-			return curVer().aiIndex;
+			return get().aiIndex;
 		}
 		
 		public static int leftHandBit() {
-			return curVer().leftHandIndex;
+			return get().leftHandIndex;
 		}
 	}
 }

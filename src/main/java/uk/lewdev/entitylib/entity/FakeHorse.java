@@ -9,6 +9,7 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 
 import uk.lewdev.entitylib.entity.protocol.FakeLivingEntity;
+import uk.lewdev.entitylib.utils.MCVersion;
 import uk.lewdev.entitylib.utils.MaskUtil;
 
 /**
@@ -18,10 +19,12 @@ import uk.lewdev.entitylib.utils.MaskUtil;
  */
 public class FakeHorse extends FakeLivingEntity {
 
-    private final WrappedDataWatcherObject horseByteWatcher = new WrappedDataWatcherObject(16, Registry.get(Byte.class));
+    private final WrappedDataWatcherObject horseByteWatcher = new WrappedDataWatcherObject(HorseMetaData.byteIndex(), 
+            Registry.get(Byte.class));
     private byte horseByte = (byte) 0;
     
-    private final WrappedDataWatcherObject horseTypeWatcher = new WrappedDataWatcherObject(18, Registry.get(Integer.class));
+    private final WrappedDataWatcherObject horseTypeWatcher = new WrappedDataWatcherObject(HorseMetaData.typeIndex(), 
+            Registry.get(Integer.class));
     private HorseColor horseColor = HorseColor.WHITE;
     private HorseStyle horseStyle = HorseStyle.NONE;
     
@@ -132,5 +135,32 @@ public class FakeHorse extends FakeLivingEntity {
     
     private static int toVariantId(HorseColor color, HorseStyle style) {
         return color.ordinal() | style.ordinal() << 8;
+    }
+    
+    private enum HorseMetaData {
+        MC1_15(16, 18),
+        MC1_17(17, 19);
+        
+        private int byteIndex, typeIndex;
+        
+        private HorseMetaData(int byteIndex, int typeIndex) {
+            this.byteIndex = byteIndex;
+            this.typeIndex = typeIndex;
+        }
+        
+        private static HorseMetaData get() {
+            if(MCVersion.CUR_VERSION().ordinal() >= MCVersion.V1_17.ordinal()) {
+                return MC1_17;
+            }
+            return MC1_15;
+        }
+        
+        public static int byteIndex() {
+            return get().byteIndex;
+        }
+        
+        public static int typeIndex() {
+            return get().typeIndex;
+        }
     }
 }

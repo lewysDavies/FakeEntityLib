@@ -44,4 +44,8 @@ public enum MCVersion {
 	public boolean isAfterOr1_16() {
 	    return this.ordinal() >= MCVersion.V1_16.ordinal();
 	}
+	
+	public boolean isAfterOr1_17() {
+	    return this.ordinal() >= MCVersion.V1_17.ordinal();
+	}
 }

@@ -42,7 +42,7 @@ public class FakePlayer extends FakeEquippableEntity {
 	
     private final WrappedGameProfile playerProfile;
 	
-	private final WrappedDataWatcherObject playerByteWatcher = new WrappedDataWatcherObject(PlayerMetaData.playerByteIndex(), Registry.get(Byte.class));
+	private final WrappedDataWatcherObject playerByteWatcher = new WrappedDataWatcherObject(PlayerMetaData.byteIndex(), Registry.get(Byte.class));
     
     private final String name;
     
@@ -141,23 +141,24 @@ public class FakePlayer extends FakeEquippableEntity {
 	}
 	
 	private enum PlayerMetaData {
-		MC1_15(16);
+		MC1_15(16),
+		MC1_17(17);
 		
-		private int playerByte;
+		private int byteIndex;
 		
 		private PlayerMetaData(int playerByte) {
-			this.playerByte = playerByte;
+			this.byteIndex = playerByte;
 		}
 		
-		public static PlayerMetaData curVer() {
-			switch (MCVersion.CUR_VERSION()) {
-			default:
-				return MC1_15;
-			}
-		}
+		private static PlayerMetaData get() {
+            if(MCVersion.CUR_VERSION().ordinal() >= MCVersion.V1_17.ordinal()) {
+                return MC1_17;
+            }
+            return MC1_15;
+        }
 		
-		public static int playerByteIndex() {
-			return curVer().playerByte;
+		public static int byteIndex() {
+			return get().byteIndex;
 		}
 	}
 }

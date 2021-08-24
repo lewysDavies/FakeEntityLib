@@ -167,21 +167,25 @@ public class FakeStand extends FakeEquippableEntity {
 	private enum StandMetaData {
 		MC1_10(11,12,13,14,15,16,17, 0, 1, 2, 3),
 		MC1_14(13,14,15,16,17,18,19, 0, 1, 2, 3),
-		MC1_15(14,15,16,17,18,19,20, 0, 1, 2, 3);
+		MC1_15(14,15,16,17,18,19,20, 0, 1, 2, 3),
+		MC1_17(15,16,17,18,19,20,21, 0, 1, 2, 3);
 		
-		public static StandMetaData curVer() {
+		private static StandMetaData get() {
 			switch (MCVersion.CUR_VERSION()) {
-			case V1_10:
-			case V1_11:
-			case V1_12:
-			case V1_13:
-				return MC1_10;
-			case V1_14:
-				return MC1_14;
-			case V1_15:
-				return MC1_15;
-			default:
-				return MC1_15;
+    			case V1_10:
+    			case V1_11:
+    			case V1_12:
+    			case V1_13:
+    				return MC1_10;
+    			case V1_14:
+    				return MC1_14;
+    			case V1_15:
+    			case V1_16:
+    				return MC1_15;
+    			case V1_17:
+    			    return MC1_17;
+    			default:
+    				return MC1_15;
 			}
 		}
 		
@@ -200,47 +204,47 @@ public class FakeStand extends FakeEquippableEntity {
 		}
 
 		public static int dataByteIndex() {
-			return curVer().dataByte;
+			return get().dataByte;
 		}
 
 		public static int headRotIndex() {
-			return curVer().headRot;
+			return get().headRot;
 		}
 
 		public static int bodyRotIndex() {
-			return curVer().bodyRot;
+			return get().bodyRot;
 		}
 
 		public static int leftArmRotIndex() {
-			return curVer().leftArmRot;
+			return get().leftArmRot;
 		}
 
 		public static int rightArmRotIndex() {
-			return curVer().rightArmRot;
+			return get().rightArmRot;
 		}
 
 		public static int leftLegRotIndex() {
-			return curVer().leftLegRot;
+			return get().leftLegRot;
 		}
 
 		public static int rightLegRotIndex() {
-			return curVer().rightLegRot;
+			return get().rightLegRot;
 		}
 		
 		public static int isSmallBit() { 
-			return curVer().isSmallBit;
+			return get().isSmallBit;
 		}
 		
 		public static int hasArmsBit() {
-			return curVer().hasArmsBit;
+			return get().hasArmsBit;
 		}
 		
 		public static int noBasePlateBit() {
-			return curVer().noBasePlateBit;
+			return get().noBasePlateBit;
 		}
 		
 		public static int isMakerBit() {
-			return curVer().isMakerBit;
+			return get().isMakerBit;
 		}
 	}
 	

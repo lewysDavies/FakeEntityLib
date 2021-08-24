@@ -16,16 +16,17 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 
 import uk.lewdev.entitylib.entity.protocol.FakeEntity;
+import uk.lewdev.entitylib.utils.MCVersion;
 
 /**
  * @author Lewys Davies (Lew_)
  */
 public class FakeEndCrystal extends FakeEntity {
     
-    private WrappedDataWatcherObject beamTarget = new WrappedDataWatcherObject(7, 
+    private WrappedDataWatcherObject beamTarget = new WrappedDataWatcherObject(EndCrystalMetaData.beamIndex(), 
             Registry.getBlockPositionSerializer(true));
     
-    private WrappedDataWatcherObject showBottom = new WrappedDataWatcherObject(8, 
+    private WrappedDataWatcherObject showBottom = new WrappedDataWatcherObject(EndCrystalMetaData.showBottomIndex(), 
             Registry.get(Boolean.class));
     
     private static Optional<Object> EMPTY = Optional.empty();
@@ -124,5 +125,32 @@ public class FakeEndCrystal extends FakeEntity {
     public void setShowBottom(boolean showBottom) {
         super.getDataWatcher().setObject(this.showBottom, showBottom);
         super.sendMetaUpdate();
+    }
+    
+    private enum EndCrystalMetaData {
+        MC1_15(7, 8),
+        MC1_17(8, 9);
+        
+        private int beamIndex, showBottomIndex;
+        
+        private EndCrystalMetaData(int beamIndex, int showBottomIndex) {
+            this.beamIndex = beamIndex;
+            this.showBottomIndex = showBottomIndex;
+        }
+        
+        private static EndCrystalMetaData get() {
+            if(MCVersion.CUR_VERSION().ordinal() >= MCVersion.V1_17.ordinal()) {
+                return MC1_17;
+            }
+            return MC1_15;
+        }
+        
+        public static int beamIndex() {
+            return get().beamIndex;
+        }
+        
+        public static int showBottomIndex() {
+            return get().showBottomIndex;
+        }
     }
 }

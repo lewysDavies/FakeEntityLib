@@ -9,13 +9,14 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 
 import uk.lewdev.entitylib.entity.protocol.FakeLivingEntity;
+import uk.lewdev.entitylib.utils.MCVersion;
 
 /**
  * @author Lewys Davies (Lew_)
  */
 public class FakeGuardian extends FakeLivingEntity {
     
-    private WrappedDataWatcherObject guardianTarget = new WrappedDataWatcherObject(16, 
+    private WrappedDataWatcherObject guardianTarget = new WrappedDataWatcherObject(GuardianMetaData.targetIndex(), 
             Registry.get(Integer.class));
     
     private int entityTargetID = 0;
@@ -45,5 +46,33 @@ public class FakeGuardian extends FakeLivingEntity {
     
     public int getTarget() {
         return this.entityTargetID;
+    }
+    
+    private enum GuardianMetaData {
+        MC1_15(15, 16),
+        MC1_17(16, 17);
+        
+        private int spikesIndex, targetIndex;
+        
+        private GuardianMetaData(int spikesIndex, int targetIndex) {
+            this.spikesIndex = spikesIndex;
+            this.targetIndex = targetIndex;
+        }
+        
+        private static GuardianMetaData get() {
+            if(MCVersion.CUR_VERSION().ordinal() >= MCVersion.V1_17.ordinal()) {
+                return MC1_17;
+            }
+            return MC1_15;
+        }
+        
+        @SuppressWarnings("unused")
+        public static int spikesIndex() {
+            return get().spikesIndex;
+        }
+        
+        public static int targetIndex() {
+            return get().targetIndex;
+        }
     }
 }

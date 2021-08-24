@@ -57,14 +57,6 @@
 					<compilerArgument>-proc:none</compilerArgument>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.3.1</version>
-				<configuration>
-					<outputDirectory>C:/Users/Lewys/Documents/Development/server/plugins</outputDirectory>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
 </project>

@@ -57,23 +57,24 @@ public class FakeVillager extends FakeInsentient {
 	}
 	
 	private enum VillagerMetaData {
-		MC1_15(17);
+		MC1_15(17),
+		MC1_17(18);
 		
-		private int villagerData;
+		private int villagerDataIndex;
 		
-		private VillagerMetaData(int villagerData) {
-			this.villagerData = villagerData;
+		private VillagerMetaData(int villagerDataIndex) {
+			this.villagerDataIndex = villagerDataIndex;
 		}
 		
-		public static VillagerMetaData curVer() {
-			switch (MCVersion.CUR_VERSION()) {
-			default:
-				return MC1_15;
-			}
+		private static VillagerMetaData get() {
+		    if(MCVersion.CUR_VERSION().ordinal() >= MCVersion.V1_17.ordinal()) {
+                return MC1_17;
+            }
+            return MC1_15;
 		}
 		
 		public static int villagerDataIndex() {
-			return curVer().villagerData;
+			return get().villagerDataIndex;
 		}
 	}
 }
