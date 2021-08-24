@@ -1,6 +1,7 @@
 package uk.lewdev.entitylib.entity.protocol;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
@@ -104,7 +105,14 @@ public abstract class FakeEntity {
 		
 		this.initMovePackets();
 		
-		this.destroyPacket.getIntegerArrays().write(0, new int[] { this.entityId });
+		if(MCVersion.CUR_VERSION().ordinal() >= MCVersion.V1_17.ordinal()) {
+		    ArrayList<Integer> id = new ArrayList<>();
+		    id.add(this.entityId);
+		    this.destroyPacket.getIntLists().write(0, id);
+		} else {
+		    this.destroyPacket.getIntegerArrays().write(0, new int[] { this.entityId });
+		}
+		
 		this.metaPacket.getIntegers().write(0, this.getEntityId());
 		
 		this.initDataWatcherObjs();

@@ -1,5 +1,7 @@
 package uk.lewdev.entitylib.utils;
 
+import org.bukkit.Bukkit;
+
 public enum MCVersion {
 	V1_10("1.10"),
 	V1_11("1.11"),
@@ -7,17 +9,18 @@ public enum MCVersion {
 	V1_13("1.13"),
 	V1_14("1.14"),
 	V1_15("1.15"),
-    V1_16("1.16");
+    V1_16("1.16"),
+    V1_17("1.17");
 	
 	protected static MCVersion CUR_VERSION = V1_10;
 	
 	static {
-		String curVerStr = ReflectionUtil.getVersion();
+		String curVerStr = Bukkit.getBukkitVersion();
 		
 		for (MCVersion version : MCVersion.values()) {
-			String versionName = version.name();
-			if(curVerStr.toLowerCase().contains(versionName.toLowerCase())) {
+			if(curVerStr.toLowerCase().contains(version.versionString)) {
 				CUR_VERSION = version;
+				Bukkit.broadcastMessage(CUR_VERSION + " is version");
 				break;
 			}
 		}

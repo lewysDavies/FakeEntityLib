@@ -19,11 +19,8 @@ public class ReflectionUtil {
 	/*
 	 * Cache of NMS classes that we've searched for
 	 */
-	private static Map<String, Class<?>> loadedNMSClasses = new HashMap<String, Class<?>>();
-	/*
-	 * Cache of OBS classes that we've searched for
-	 */
-	private static Map<String, Class<?>> loadedOBCClasses = new HashMap<String, Class<?>>();
+	private static Map<String, Class<?>> loadedClasses = new HashMap<String, Class<?>>();
+	
 	/*
 	 * Cache of methods that we've found in particular classes
 	 */
@@ -34,19 +31,6 @@ public class ReflectionUtil {
 	private static Map<Class<?>, Map<String, Field>> loadedFields = new HashMap<Class<?>, Map<String, Field>>();
 
 	/**
-	 * Gets the version string for NMS & OBC class paths
-	 *
-	 * @return The version string of OBC and NMS packages
-	 */
-	public static String getVersion() {
-		if (versionString == null) {
-			String name = Bukkit.getServer().getClass().getPackage().getName();
-			versionString = name.substring(name.lastIndexOf('.') + 1) + ".";
-		}
-		return versionString;
-	}
-
-	/**
 	 * Get an NMS Class
 	 *
 	 * @param nmsClassName
@@ -54,19 +38,8 @@ public class ReflectionUtil {
 	 * @return The class
 	 */
 	public static Class<?> getNMSClass(String nmsClassName) {
-		if (loadedNMSClasses.containsKey(nmsClassName)) {
-			return loadedNMSClasses.get(nmsClassName);
-		}
-		String clazzName = "net.minecraft.server." + getVersion() + nmsClassName;
-		Class<?> clazz;
-		try {
-			clazz = Class.forName(clazzName);
-		} catch (Throwable t) {
-			t.printStackTrace();
-			return loadedNMSClasses.put(nmsClassName, null);
-		}
-		loadedNMSClasses.put(nmsClassName, clazz);
-		return clazz;
+	    String clazzName = "net.minecraft.server." + getVersion() + nmsClassName;
+	    return getClass(clazzName);
 	}
 
 	/**
@@ -77,21 +50,34 @@ public class ReflectionUtil {
 	 * @return the found class at the specified path
 	 */
 	public synchronized static Class<?> getOBCClass(String obcClassName) {
-		if (loadedOBCClasses.containsKey(obcClassName)) {
-			return loadedOBCClasses.get(obcClassName);
-		}
-		String clazzName = "org.bukkit.craftbukkit." + getVersion() + obcClassName;
-		Class<?> clazz;
-		try {
-			clazz = Class.forName(clazzName);
-		} catch (Throwable t) {
-			t.printStackTrace();
-			loadedOBCClasses.put(obcClassName, null);
-			return null;
-		}
-		loadedOBCClasses.put(obcClassName, clazz);
-		return clazz;
+	    String clazzName = "org.bukkit.craftbukkit." + getVersion() + obcClassName;
+	    return getClass(clazzName);
 	}
+	
+	/**
+     * Get a class from the org.bukkit.craftbukkit package
+     *
+     * @param obcClassName
+     *            the path to the class
+     * @return the found class at the specified path
+     */
+    public synchronized static Class<?> getClass(String clazzName) {
+        if (loadedClasses.containsKey(clazzName)) {
+            return loadedClasses.get(clazzName);
+        }
+        
+        Class<?> clazz;
+        try {
+            clazz = Class.forName(clazzName);
+        } catch (Throwable t) {
+            t.printStackTrace();
+            loadedClasses.put(clazzName, null);
+            return null;
+        }
+        
+        loadedClasses.put(clazzName, clazz);
+        return clazz;
+    }
 
 	/**
 	 * Get a classes constructor
@@ -242,6 +228,19 @@ public class ReflectionUtil {
 			ex.printStackTrace();
 		}
 	}
+	
+	/**
+     * Gets the version string for NMS & OBC class paths
+     *
+     * @return The version string of OBC and NMS packages
+     */
+    private static String getVersion() {
+        if (versionString == null) {
+            String name = Bukkit.getServer().getClass().getPackage().getName();
+            versionString = name.substring(name.lastIndexOf('.') + 1) + ".";
+        }
+        return versionString;
+    }
 
 	/**
 	 * Copied from DarkBlade12's ReflectionUtils.
