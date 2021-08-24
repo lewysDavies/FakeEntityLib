@@ -1,5 +1,6 @@
 package uk.lewdev.entitylib.events;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import com.comphenix.protocol.PacketType;
@@ -12,7 +13,6 @@ import uk.lewdev.entitylib.FakeEntityPlugin;
 import uk.lewdev.entitylib.entity.protocol.FakeEntity;
 
 /**
- * TODO
  * @author Lewys Davies (Lew_)
  */
 public class ProtocolLibListeners {
@@ -20,7 +20,7 @@ public class ProtocolLibListeners {
 	private static boolean isInit = false;
 
 	public ProtocolLibListeners() {
-		if(isInit) return; // Don't Register Listeners Twice
+		if(isInit) return;
 		
 		isInit = true;
 		this.entityInteractListener();
@@ -33,10 +33,12 @@ public class ProtocolLibListeners {
 			@Override
 		    public void onPacketReceiving(PacketEvent event) {
 				int entityId = event.getPacket().getIntegers().getValues().get(0);
-				Player sender = event.getPlayer();
+				Player player = event.getPlayer();
 				FakeEntity entity = FakeEntity.ALL_ALIVE_INSTANCES.get(entityId);
 				
-				
+				if(entity != null) {
+				    Bukkit.getPluginManager().callEvent(new PlayerInteractFakeEntity(player, entity));
+				}
 		    }
 		});
 	}
