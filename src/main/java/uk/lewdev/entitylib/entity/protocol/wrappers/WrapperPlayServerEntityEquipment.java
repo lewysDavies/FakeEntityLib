@@ -1,25 +1,23 @@
 package uk.lewdev.entitylib.entity.protocol.wrappers;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.bukkit.World;
-import org.bukkit.entity.Entity;
-import org.bukkit.inventory.ItemStack;
-
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
 import com.comphenix.protocol.wrappers.Pair;
-
+import org.bukkit.World;
+import org.bukkit.entity.Entity;
+import org.bukkit.inventory.ItemStack;
 import uk.lewdev.entitylib.utils.MCVersion;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class WrapperPlayServerEntityEquipment extends AbstractPacket {
-    
+
     public static final PacketType TYPE =
-            PacketType.Play.Server.ENTITY_EQUIPMENT;
-    
+      PacketType.Play.Server.ENTITY_EQUIPMENT;
+
     private ItemSlot slot;
     private ItemStack item;
 
@@ -36,7 +34,7 @@ public class WrapperPlayServerEntityEquipment extends AbstractPacket {
      * Retrieve Entity ID.
      * <p>
      * Notes: entity's ID
-     * 
+     *
      * @return The current Entity ID
      */
     public int getEntityID() {
@@ -45,7 +43,7 @@ public class WrapperPlayServerEntityEquipment extends AbstractPacket {
 
     /**
      * Set Entity ID.
-     * 
+     *
      * @param value - new value.
      */
     public void setEntityID(int value) {
@@ -54,7 +52,7 @@ public class WrapperPlayServerEntityEquipment extends AbstractPacket {
 
     /**
      * Retrieve the entity of the painting that will be spawned.
-     * 
+     *
      * @param world - the current world of the entity.
      * @return The spawned entity.
      */
@@ -64,7 +62,7 @@ public class WrapperPlayServerEntityEquipment extends AbstractPacket {
 
     /**
      * Retrieve the entity of the painting that will be spawned.
-     * 
+     *
      * @param event - the packet event.
      * @return The spawned entity.
      */
@@ -78,8 +76,8 @@ public class WrapperPlayServerEntityEquipment extends AbstractPacket {
 
     public void setSlot(ItemSlot value) {
         this.slot = value;
-        
-        if(MCVersion.CUR_VERSION().isAfterOr1_16()) {
+
+        if (MCVersion.CUR_VERSION().isAfterOr1_16()) {
             this.update1_16Packet();
         } else {
             handle.getItemSlots().write(0, value);
@@ -90,7 +88,7 @@ public class WrapperPlayServerEntityEquipment extends AbstractPacket {
      * Retrieve Item.
      * <p>
      * Notes: item in slot format
-     * 
+     *
      * @return The current Item
      */
     public ItemStack getItem() {
@@ -99,29 +97,29 @@ public class WrapperPlayServerEntityEquipment extends AbstractPacket {
 
     /**
      * Set Item.
-     * 
+     *
      * @param value - new value.
      */
     public void setItem(ItemStack value) {
         this.item = value;
-        
-        if(MCVersion.CUR_VERSION().isAfterOr1_16()) {
+
+        if (MCVersion.CUR_VERSION().isAfterOr1_16()) {
             this.update1_16Packet();
         } else {
             handle.getItemModifier().write(0, value);
         }
     }
-    
+
     private void update1_16Packet() {
-        if(this.slot == null || this.item == null) {
+        if (this.slot == null || this.item == null) {
             return;
         }
-        
+
         List<Pair<ItemSlot, ItemStack>> items = new ArrayList<>();
-        
+
         Pair<ItemSlot, ItemStack> pair = new Pair<>(this.slot, this.item);
         items.add(pair);
-        
+
         handle.getSlotStackPairLists().write(0, items);
     }
 }

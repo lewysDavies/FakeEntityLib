@@ -1,18 +1,17 @@
 package uk.lewdev.entitylib.entity;
 
-import java.util.UUID;
-
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.EntityType;
-
 import uk.lewdev.entitylib.entity.protocol.FakeLivingEntity;
+
+import java.util.UUID;
 
 /**
  * @author Lewys Davies (Lew_)
  */
 public class FakeSilverfish extends FakeLivingEntity {
-    
+
     /**
      * @param world
      * @param x
@@ -22,7 +21,7 @@ public class FakeSilverfish extends FakeLivingEntity {
     public FakeSilverfish(World world, double x, double y, double z) {
         super(EntityType.SILVERFISH, UUID.randomUUID(), world, x, y, z);
     }
-    
+
     /**
      * @param loc
      */
