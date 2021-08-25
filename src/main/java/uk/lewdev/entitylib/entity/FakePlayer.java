@@ -83,13 +83,12 @@ public class FakePlayer extends FakeEquippableEntity {
     }
 
     public FakePlayer(WrappedGameProfile profile, Location loc) {
-        super(EntityType.PLAYER, UUID.randomUUID(), loc.getWorld(), loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch(), loc.getYaw());
+        super(EntityType.PLAYER, profile.getUUID(), loc.getWorld(), loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch(), loc.getYaw());
 
-        this.name = profile.getName();
+        this.name = profile.getName().substring(0, Math.min(profile.getName().length(), 15));
         super.setCustomName(this.name);
 
         this.playerProfile = profile;
-        this.playerProfile.getProperties().put("textures", profile.getProperties().get("textures").iterator().next());
     }
 
     public final String getName() {

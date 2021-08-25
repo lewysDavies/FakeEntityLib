@@ -5,3 +5,5 @@ author: "Lewys Davies (Lew_)"
 depends: ProtocolLib
 main: uk.lewdev.entitylib.FakeEntityPlugin
 api-version: 1.17
+depend:
+  - ProtocolLib
