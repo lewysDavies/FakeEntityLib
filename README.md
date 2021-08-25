@@ -1,7 +1,7 @@
 # FakeEntityLib
 [![](https://jitpack.io/v/lewysDavies/FakeEntityLib.svg)](https://jitpack.io/#lewysDavies/FakeEntityLib)
 
-Fake Minecraft Entities Using ProtocolLib & The Minecraft Protocol Directly.
+Fake Minecraft Entities Using ProtocolLib & The Minecraft Protocol Directly. Supports Spigot 1.10 to 1.17
 
 ### Clone the repository
 Maven:
