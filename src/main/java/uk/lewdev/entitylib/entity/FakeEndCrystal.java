@@ -136,7 +136,7 @@ public class FakeEndCrystal extends FakeEntity {
         }
 
         private static EndCrystalMetaData get() {
-            if (MCVersion.CUR_VERSION().ordinal() >= MCVersion.V1_17.ordinal()) {
+            if (MCVersion.getCurrentVersion().ordinal() >= MCVersion.V1_17.ordinal()) {
                 return MC1_17;
             }
             return MC1_15;

@@ -14,9 +14,9 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import uk.lewdev.entitylib.FakeEntityAPI;
 import uk.lewdev.entitylib.entity.EntityId;
 import uk.lewdev.entitylib.utils.AngleUtil;
-import uk.lewdev.entitylib.utils.EntityID;
 import uk.lewdev.entitylib.utils.MCVersion;
 import uk.lewdev.entitylib.utils.MaskUtil;
 
@@ -74,7 +74,7 @@ public abstract class FakeEntity {
     private final Set<Integer> passengerEids = new HashSet<>();
 
     protected FakeEntity(EntityType type, UUID uuid, World world, double x, double y, double z, float yaw, float pitch) {
-        this.entityId = EntityID.nextAndIncrement();
+        this.entityId = FakeEntityAPI.get().getEntityIdProvider().nextAndIncrement();
         this.uuid = uuid;
         this.type = type;
         this.protocolID = EntityId.fromType(type);
@@ -88,7 +88,7 @@ public abstract class FakeEntity {
 
         this.initMovePackets();
 
-        if (MCVersion.CUR_VERSION().ordinal() >= MCVersion.V1_17.ordinal()) {
+        if (MCVersion.getCurrentVersion().ordinal() >= MCVersion.V1_17.ordinal()) {
             ArrayList<Integer> id = new ArrayList<>();
             id.add(this.entityId);
             this.destroyPacket.getIntLists().write(0, id);
@@ -773,7 +773,7 @@ public abstract class FakeEntity {
          * @return Where within the Byte the invisible bit is located.
          */
         static int invisibleIndex() {
-            switch (MCVersion.CUR_VERSION()) {
+            switch (MCVersion.getCurrentVersion()) {
                 case V1_10:
                 case V1_11:
                 case V1_12:
@@ -788,7 +788,7 @@ public abstract class FakeEntity {
         }
 
         static int glowingIndex() {
-            switch (MCVersion.CUR_VERSION()) {
+            switch (MCVersion.getCurrentVersion()) {
                 case V1_10:
                 case V1_11:
                 case V1_12:
@@ -808,7 +808,7 @@ public abstract class FakeEntity {
          * @return Index inside DataWatcher the custom name is located.
          */
         static int customNameIndex() {
-            switch (MCVersion.CUR_VERSION()) {
+            switch (MCVersion.getCurrentVersion()) {
                 case V1_10:
                 case V1_11:
                 case V1_12:
@@ -825,7 +825,7 @@ public abstract class FakeEntity {
          * @return Index inside DataWatcher the custom name visible is located.
          */
         static int nameVisible() {
-            switch (MCVersion.CUR_VERSION()) {
+            switch (MCVersion.getCurrentVersion()) {
                 case V1_10:
                 case V1_11:
                 case V1_12:
@@ -842,7 +842,7 @@ public abstract class FakeEntity {
          * @return Index inside DataWatcher the invisibility is located.
          */
         static int gravityIndex() {
-            switch (MCVersion.CUR_VERSION()) {
+            switch (MCVersion.getCurrentVersion()) {
                 case V1_10:
                 case V1_11:
                 case V1_12:
@@ -856,7 +856,7 @@ public abstract class FakeEntity {
         }
 
         static int poseIndex() {
-            switch (MCVersion.CUR_VERSION()) {
+            switch (MCVersion.getCurrentVersion()) {
                 case V1_10:
                 case V1_11:
                 case V1_12:

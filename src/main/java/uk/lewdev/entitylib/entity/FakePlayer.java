@@ -14,6 +14,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import uk.lewdev.entitylib.FakeEntityAPI;
 import uk.lewdev.entitylib.FakeEntityPlugin;
 import uk.lewdev.entitylib.entity.protocol.FakeEquippableEntity;
 import uk.lewdev.entitylib.entity.protocol.wrappers.WrapperPlayServerNamedEntitySpawn;
@@ -131,7 +132,7 @@ public class FakePlayer extends FakeEquippableEntity {
         this.sendHeadYawPacket(player);
         this.sendMetaUpdate();
 
-        Bukkit.getScheduler().runTaskLater(FakeEntityPlugin.instance, () -> {
+        Bukkit.getScheduler().runTaskLater(((FakeEntityPlugin) FakeEntityAPI.get()), () -> {
             playerInfoPacket.setAction(PlayerInfoAction.REMOVE_PLAYER);
             try {
                 protocol.sendServerPacket(player, playerInfoPacket.getHandle());
@@ -161,7 +162,7 @@ public class FakePlayer extends FakeEquippableEntity {
         }
 
         private static PlayerMetaData get() {
-            if (MCVersion.CUR_VERSION().ordinal() >= MCVersion.V1_17.ordinal()) {
+            if (MCVersion.getCurrentVersion().ordinal() >= MCVersion.V1_17.ordinal()) {
                 return MC1_17;
             }
             return MC1_15;

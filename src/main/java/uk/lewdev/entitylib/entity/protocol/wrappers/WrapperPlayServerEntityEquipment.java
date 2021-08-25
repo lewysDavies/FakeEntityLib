@@ -77,7 +77,7 @@ public class WrapperPlayServerEntityEquipment extends AbstractPacket {
     public void setSlot(ItemSlot value) {
         this.slot = value;
 
-        if (MCVersion.CUR_VERSION().isAfterOr1_16()) {
+        if (MCVersion.getCurrentVersion().isAfterOr1_16()) {
             this.update1_16Packet();
         } else {
             handle.getItemSlots().write(0, value);
@@ -103,7 +103,7 @@ public class WrapperPlayServerEntityEquipment extends AbstractPacket {
     public void setItem(ItemStack value) {
         this.item = value;
 
-        if (MCVersion.CUR_VERSION().isAfterOr1_16()) {
+        if (MCVersion.getCurrentVersion().isAfterOr1_16()) {
             this.update1_16Packet();
         } else {
             handle.getItemModifier().write(0, value);

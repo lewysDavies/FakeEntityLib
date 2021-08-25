@@ -190,7 +190,7 @@ public class FakeStand extends FakeEquippableEntity {
         }
 
         private static StandMetaData get() {
-            switch (MCVersion.CUR_VERSION()) {
+            switch (MCVersion.getCurrentVersion()) {
                 case V1_10:
                 case V1_11:
                 case V1_12:
