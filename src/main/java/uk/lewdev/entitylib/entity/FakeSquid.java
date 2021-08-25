@@ -1,11 +1,10 @@
 package uk.lewdev.entitylib.entity;
 
-import java.util.UUID;
-
 import org.bukkit.World;
 import org.bukkit.entity.EntityType;
-
 import uk.lewdev.entitylib.entity.protocol.FakeLivingEntity;
+
+import java.util.UUID;
 
 /**
  * @author Lewys Davies (Lew_)

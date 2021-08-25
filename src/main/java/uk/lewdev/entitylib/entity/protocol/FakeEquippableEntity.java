@@ -1,23 +1,21 @@
 package uk.lewdev.entitylib.entity.protocol;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.UUID;
-
+import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
-import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
-
 import uk.lewdev.entitylib.entity.protocol.wrappers.WrapperPlayServerEntityEquipment;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.UUID;
 
 /**
  * A {@link FakeLivingEntity} that could have armour
- * 
+ *
  * @author Lewys Davies (Lew_)
  */
 public class FakeEquippableEntity extends FakeLivingEntity {
@@ -25,12 +23,12 @@ public class FakeEquippableEntity extends FakeLivingEntity {
     private final Map<ItemSlot, ItemStack> equipment = new HashMap<>();
 
     protected FakeEquippableEntity(EntityType type, UUID uuid, World world, double x, double y, double z, float yaw,
-            float headPitch, float headYaw) {
-        super(type, uuid, world, x, y, z, yaw, headPitch);
+                                   float headPitch, float headYaw) {
+        super(type, uuid, world, x, y, z, yaw, headPitch, headYaw);
     }
 
     protected FakeEquippableEntity(EntityType type, UUID uuid, World world, double x, double y, double z, float yaw,
-            float headPitch) {
+                                   float headPitch) {
         super(type, uuid, world, x, y, z, yaw, headPitch, 0);
     }
 
@@ -47,18 +45,18 @@ public class FakeEquippableEntity extends FakeLivingEntity {
             packet.setEntityID(getEntityId());
             packet.setSlot(slot.getKey());
             packet.setItem(slot.getValue());
-            
+
             packet.sendPacket(player);
         }
     }
 
     public void setItem(ItemSlot slot, ItemStack item) {
         this.assertNotDead();
-        
-        if(item == null) item = new ItemStack(Material.AIR);
-        
+
+        if (item == null) item = new ItemStack(Material.AIR);
+
         this.equipment.put(slot, item);
-        
+
         WrapperPlayServerEntityEquipment packet = new WrapperPlayServerEntityEquipment();
         packet.setEntityID(getEntityId());
         packet.setSlot(slot);
@@ -66,7 +64,7 @@ public class FakeEquippableEntity extends FakeLivingEntity {
 
         super.getVisibilityHandler().renderedTo().forEach(packet::sendPacket);
     }
-    
+
     public ItemStack getItem(ItemSlot slot) {
         return this.equipment.get(slot);
     }
