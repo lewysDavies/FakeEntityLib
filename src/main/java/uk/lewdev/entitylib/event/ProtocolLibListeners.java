@@ -7,7 +7,6 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import uk.lewdev.entitylib.FakeEntityAPI;
 import uk.lewdev.entitylib.FakeEntityPlugin;
 import uk.lewdev.entitylib.entity.protocol.FakeEntity;
 

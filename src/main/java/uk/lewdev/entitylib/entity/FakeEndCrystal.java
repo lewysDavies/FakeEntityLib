@@ -48,6 +48,7 @@ public class FakeEndCrystal extends FakeEntity {
         super.assertNotDead();
 
         PacketContainer spawnPacket = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY);
+        
         spawnPacket.getIntegers()
           .write(0, super.getEntityId());
         spawnPacket.getEntityTypeModifier()
