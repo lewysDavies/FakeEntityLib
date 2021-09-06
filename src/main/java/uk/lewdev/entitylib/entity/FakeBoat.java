@@ -14,7 +14,6 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 
 import uk.lewdev.entitylib.entity.protocol.FakeEntity;
-import uk.lewdev.entitylib.utils.AngleUtil;
 
 /**
  * @author Lewys Davies (Lew_)
@@ -56,9 +55,6 @@ public class FakeBoat extends FakeEntity {
             .write(0, super.getX())
             .write(1, super.getY())
             .write(2, super.getZ());
-       spawnPacket.getBytes()
-            .write(0, AngleUtil.fromDegrees(super.getYaw()))
-            .write(1, AngleUtil.fromDegrees(super.getPitch()));
         
         try {
             protocol.sendServerPacket(player, spawnPacket);
