@@ -138,7 +138,7 @@ public class FakePlayer extends FakeEquippableEntity {
             } catch (InvocationTargetException e) {
                 e.printStackTrace();
             }
-        }, 10);
+        }, 25);
     }
 
     private List<PlayerInfoData> getPlayerInfoData() {
