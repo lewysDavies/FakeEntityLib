@@ -782,6 +782,8 @@ public abstract class FakeEntity {
                 case V1_14:
                 case V1_15:
                 case V1_16:
+                case V1_17:
+                case V1_18:
                 default:
                     return 5;
             }
@@ -797,6 +799,8 @@ public abstract class FakeEntity {
                 case V1_14:
                 case V1_15:
                 case V1_16:
+                case V1_17:
+                case V1_18:
                 default:
                     return 6;
             }
@@ -816,6 +820,8 @@ public abstract class FakeEntity {
                 case V1_14:
                 case V1_15:
                 case V1_16:
+                case V1_17:
+                case V1_18:
                 default:
                     return 2;
             }
@@ -833,6 +839,8 @@ public abstract class FakeEntity {
                 case V1_14:
                 case V1_15:
                 case V1_16:
+                case V1_17:
+                case V1_18:
                 default:
                     return 3;
             }
@@ -850,6 +858,8 @@ public abstract class FakeEntity {
                 case V1_14:
                 case V1_15:
                 case V1_16:
+                case V1_17:
+                case V1_18:
                 default:
                     return 5;
             }
@@ -864,6 +874,8 @@ public abstract class FakeEntity {
                 case V1_14:
                 case V1_15:
                 case V1_16:
+                case V1_17:
+                case V1_18:
                 default:
                     return 6;
             }

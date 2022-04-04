@@ -202,6 +202,7 @@ public class FakeStand extends FakeEquippableEntity {
                 case V1_16:
                     return MC1_15;
                 case V1_17:
+                case V1_18:
                     return MC1_17;
                 default:
                     return MC1_15;
