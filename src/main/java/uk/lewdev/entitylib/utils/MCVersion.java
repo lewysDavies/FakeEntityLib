@@ -3,6 +3,7 @@ package uk.lewdev.entitylib.utils;
 import org.bukkit.Bukkit;
 import uk.lewdev.entitylib.utils.nms.EntityIdProvider1_14;
 import uk.lewdev.entitylib.utils.nms.EntityIdProvider1_17;
+import uk.lewdev.entitylib.utils.nms.EntityIdProvider1_18;
 import uk.lewdev.entitylib.utils.nms.EntityIdProvider1_9;
 
 import java.util.function.Supplier;
@@ -16,7 +17,8 @@ public enum MCVersion {
     V1_14("1.14", EntityIdProvider1_14::new),
     V1_15("1.15", EntityIdProvider1_14::new),
     V1_16("1.16", EntityIdProvider1_14::new),
-    V1_17("1.17", EntityIdProvider1_17::new);
+    V1_17("1.17", EntityIdProvider1_17::new),
+    V1_18("1.18", EntityIdProvider1_18::new);
 
     private static MCVersion CUR_VERSION = V1_10;
 
